@@ -7,7 +7,7 @@
         protected string _description;
         protected string _mediaType;
         protected int _releaseYear;
-        protected string _genre;
+        protected HashSet<string> _genres;
         protected int _ageRestriction;
         protected int _creator;
         private int creator;
@@ -37,10 +37,9 @@
             get => _releaseYear;
             set => _releaseYear = value;
         }
-        public string Genre
+        public HashSet<string> Genres
         {
-            get => _genre;
-            set => _genre = value;
+            get => _genres;
         }
         public int AgeRestriction
         {
@@ -61,7 +60,8 @@
             _description = description;
             _mediaType = mediaType;
             _releaseYear = releaseYear;
-            _genre = genre;
+            _genres = new HashSet<string>();
+            _genres.Add(genre);
             _ageRestriction = ageRestriction;
             _creator = creator;
         }
