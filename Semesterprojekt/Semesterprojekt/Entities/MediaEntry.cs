@@ -1,11 +1,10 @@
-﻿namespace Semesterprojekt
+﻿namespace Semesterprojekt.Entities
 {
-    abstract class MediaEntry
+    public abstract class MediaEntry
     {
         protected int _mediaEntryId;
         protected string _title;
         protected string _description;
-        protected string _mediaType;
         protected int _releaseYear;
         protected HashSet<string> _genres;
         protected int _ageRestriction;
@@ -27,11 +26,6 @@
             get => _description;
             set => _description = value;
         }
-        public string MediaType
-        {
-            get => _mediaType;
-            set => _mediaType = value;
-        }
         public int ReleaseYear
         {
             get => _releaseYear;
@@ -52,13 +46,12 @@
         }
 
 
-        public MediaEntry(int mediaEntryId, string title, string description, string mediaType, int releaseYear, string genre,
+        public MediaEntry(int mediaEntryId, string title, string description, int releaseYear, string genre,
             int ageRestriction, int creator)
         {
             _mediaEntryId = mediaEntryId;   // TODO: ID generieren lassen
             _title = title;
             _description = description;
-            _mediaType = mediaType;
             _releaseYear = releaseYear;
             _genres = new HashSet<string>();
             _genres.Add(genre);

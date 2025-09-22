@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Semesterprojekt.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Semesterprojekt
+namespace Semesterprojekt.Entities
 {
-    class Rating
+    public class Rating
     {
         private int _ratingId;
-        private int _user;
-        private int _mediaEntry;
+        private int _userId;
+        private int _mediaEntryId;
         private int _starRating;
         private string? _comment;
         private DateTime _createdAt;
@@ -22,14 +23,14 @@ namespace Semesterprojekt
             get => _ratingId;
         }
 
-        public int SpecificUser
+        public int UserId
         {
-            get => _user;
+            get => _userId;
         }
 
-        public int MediaEntry
+        public int MediaEntryId
         {
-            get => _mediaEntry;
+            get => _mediaEntryId;
         }
 
         public int StarRating
@@ -38,7 +39,7 @@ namespace Semesterprojekt
             set {
                 if(value < 1 || value > 5)
                 {
-                    throw new ArgumentException("Star rating has to be between 1 and 5!");
+                    throw new InvalidStarRatingExcption("Star rating has to be between 1 and 5!");
                 }
                 _starRating = value;
             }
@@ -66,11 +67,11 @@ namespace Semesterprojekt
             set => _confirmedByAuthor = value;
         }
 
-        Rating(int ratingId, int user, int mediaEntry, int starRating, string comment)
+        public Rating(int ratingId, int userId, int mediaEntryId, int starRating, string comment)
         {
             _ratingId = ratingId;   // TODO: ID generieren lassen
-            _user = user;
-            _mediaEntry = mediaEntry;
+            _userId = userId;
+            _mediaEntryId = mediaEntryId;
             StarRating = starRating;
             _comment = comment;
             _createdAt = DateTime.UtcNow;

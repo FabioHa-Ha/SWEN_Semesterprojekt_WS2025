@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Semesterprojekt
+namespace Semesterprojekt.Entities
 {
-    class User
+    public class User
     {
         private int _userId;
         private string _username;
