@@ -1,4 +1,6 @@
-﻿namespace Semesterprojekt.Entities
+﻿using System.Linq;
+
+namespace Semesterprojekt.Entities
 {
     public abstract class MediaEntry
     {
@@ -9,7 +11,8 @@
         protected HashSet<string> _genres;
         protected int _ageRestriction;
         protected int _creator;
-        private int creator;
+        protected int creator;
+        protected HashSet<int> _ratings;
 
         public int MediaEntryId
         {
@@ -45,6 +48,23 @@
             get => _creator;
         }
 
+        public HashSet<int> Ratings
+        {
+            get => _ratings;
+        }
+
+        public double AverageScore
+        {
+            get
+            {
+                if(Ratings.Count > 0)
+                {
+                    return Ratings.Average();
+                }
+                return 0;
+            }
+        }
+
 
         public MediaEntry(int mediaEntryId, string title, string description, int releaseYear, string genre,
             int ageRestriction, int creator)
@@ -57,6 +77,7 @@
             _genres.Add(genre);
             _ageRestriction = ageRestriction;
             _creator = creator;
+            _ratings = new HashSet<int>();
         }
     }
 }
