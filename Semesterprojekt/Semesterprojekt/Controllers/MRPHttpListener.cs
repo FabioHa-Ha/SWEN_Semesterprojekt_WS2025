@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Semesterprojekt.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,15 +13,15 @@ namespace Semesterprojekt.Controllers
         public static async Task<HttpListenerResponse> NotFoundResponse(HttpListenerRequest request, HttpListenerResponse response)
         {
             response.StatusCode = 404;
-            string responseBody = "";
-            byte[] bytes;
-            responseBody = $"Error 404:\nThe requested page: {request.HttpMethod} {request.Url} is not available";
-            bytes = Encoding.UTF8.GetBytes(responseBody);
+            string responseText = $"Error 404:\nThe requested page: {request.HttpMethod} {request.Url} is not available";
+            return await HttpUtility.WriteTextToResponse(response, responseText);
+        }
 
-            response.ContentType = "text/plain; charset=utf-8";
-            response.ContentLength64 = bytes.Length;
-            await response.OutputStream.WriteAsync(bytes, 0, bytes.Length);
-            return response;
+        public static async Task<HttpListenerResponse> ErrorResponse(HttpListenerRequest request, HttpListenerResponse response, Exception e, int statusCode)
+        {
+            response.StatusCode = statusCode;
+            string responseText = $"Error:\n" + e.Message;
+            return await HttpUtility.WriteTextToResponse(response, responseText);
         }
 
         public static async Task RunHttpListener()
@@ -43,33 +44,47 @@ namespace Semesterprojekt.Controllers
                         {
                             HttpListenerRequest request = ctx.Request;
                             HttpListenerResponse response = ctx.Response;
+
+                            // Remove trailing "/" if present
                             string url = request.RawUrl;
                             if(url.EndsWith("/"))
                             {
                                 url = url.Substring(0, url.Length - 1);
                             }
+
+                            // Read Request Body
+                            StreamReader bodyStream = new StreamReader(request.InputStream);
+                            string requestBodyText = bodyStream.ReadToEnd();
+
                             bool requestHandled = false;
-                            switch (request.HttpMethod)
+                            try
                             {
-                                case "GET":
-                                    break;
-                                case "POST":
-                                    switch (url)
-                                    {
-                                        case "/api/users/login":
-                                            response = AuthController.Login(request, response);
-                                            requestHandled = true;
-                                            break;
-                                        case "/api/users/register":
-                                            response = AuthController.Register(request, response);
-                                            requestHandled = true;
-                                            break;
-                                    }
-                                    break;
-                                case "PUT":
-                                    break;
-                                case "DELETE":
-                                    break;
+                                switch (request.HttpMethod)
+                                {
+                                    case "GET":
+                                        break;
+                                    case "POST":
+                                        switch (url)
+                                        {
+                                            case "/api/users/login":
+                                                requestHandled = true;
+                                                response = await AuthController.Login(requestBodyText, response);
+                                                break;
+                                            case "/api/users/register":
+                                                requestHandled = true;
+                                                response = await AuthController.Register(requestBodyText, response);
+                                                break;
+                                        }
+                                        break;
+                                    case "PUT":
+                                        break;
+                                    case "DELETE":
+                                        break;
+                                }
+                            }
+                            catch (InvalidRequestBodyException e)
+                            {
+                                response = await ErrorResponse(request, response, e, 400);
                             }
                             if (!requestHandled)
                             {
