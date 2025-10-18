@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.BusinessLayer
 {
-    internal class RatingManager
+    internal class RatingService
     {
         public void AddRating(MediaEntry mediaEntry, User user, int starRating, string comment)
         {

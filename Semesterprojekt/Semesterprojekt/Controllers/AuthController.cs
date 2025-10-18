@@ -1,5 +1,6 @@
 ﻿using Semesterprojekt.DTOs;
 using Semesterprojekt.Exceptions;
+using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,9 @@ namespace Semesterprojekt.Controllers
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
-            return await HttpUtility.WriteJsonToResponse(response, JsonSerializer.Serialize(userInfo));
+            AuthService.RegisterUser(userInfo.username, userInfo.password);
+            JwtDTO jwtDTO = new JwtDTO(HttpUtility.GenerateJwtToken(userInfo.username));
+            return await HttpUtility.WriteJsonToResponse(response, JsonSerializer.Serialize(jwtDTO));
         }
     }
 }

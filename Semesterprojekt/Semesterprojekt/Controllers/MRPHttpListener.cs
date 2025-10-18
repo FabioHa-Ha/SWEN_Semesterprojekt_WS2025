@@ -1,4 +1,5 @@
 ﻿using Semesterprojekt.Exceptions;
+using Semesterprojekt.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,9 +83,14 @@ namespace Semesterprojekt.Controllers
                                         break;
                                 }
                             }
-                            catch (InvalidRequestBodyException e)
+                            catch (Exception e) when (e is InvalidRequestBodyException || e is UserAlreadyExistsException)
                             {
                                 response = await ErrorResponse(request, response, e, 400);
+                            }
+                            catch (Exception e)
+                            {
+                                response = await ErrorResponse(request, response, e, 500);
+                                Console.WriteLine("Unexpected Exception: " + e.Message);
                             }
                             if (!requestHandled)
                             {
@@ -92,9 +98,9 @@ namespace Semesterprojekt.Controllers
                             }
                             response.Close();
                         }
-                        catch (Exception ex)
+                        catch (Exception e)
                         {
-                            Console.Error.WriteLine(ex);
+                            Console.Error.WriteLine(e);
                         }
                     });
                 }
