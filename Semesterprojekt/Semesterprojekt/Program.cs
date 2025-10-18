@@ -1,10 +1,12 @@
-﻿namespace Semesterprojekt
+﻿using Semesterprojekt.Controllers;
+
+namespace Semesterprojekt
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            await MRPHttpListener.RunHttpListener();
         }
     }
 }

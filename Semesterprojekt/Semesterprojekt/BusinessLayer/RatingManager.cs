@@ -1,5 +1,6 @@
 ﻿using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
+using Semesterprojekt.PersistenceLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace Semesterprojekt.BusinessLayer
             int newRatingId = 1;
             Rating rating = new Rating(newRatingId, user.UserId, mediaEntry.MediaEntryId, starRating, comment);
             mediaEntry.Ratings.Add(rating.RatingId);
-            // TODO: Send to persistence layer
+            RatingRepository.CreateRating(rating);
+            // TODO: Entity Repository Update
         }
 
         public void LikeRating(User user, Rating rating)
@@ -23,7 +25,7 @@ namespace Semesterprojekt.BusinessLayer
             if (rating.UserId != user.UserId)
             {
                 rating.LikedBy.Add(user.UserId);    // TODO: What happens when a user already liked a rating?
-                // TODO: Send update to persistence layer
+                RatingRepository.UpdateRating(rating);
             }
             else
             {
@@ -37,7 +39,7 @@ namespace Semesterprojekt.BusinessLayer
             {
                 rating.StarRating = newStarRating;
                 rating.Comment = newComment;
-                // TODO: Send update to persistence layer
+                RatingRepository.UpdateRating(rating);
             }
             else
             {
@@ -50,7 +52,7 @@ namespace Semesterprojekt.BusinessLayer
             if (rating.UserId == user.UserId) 
             { 
                 rating.ConfirmedByAuthor = true;
-                // TODO: Send update to persistence layer
+                RatingRepository.UpdateRating(rating);
             }
             else
             {
