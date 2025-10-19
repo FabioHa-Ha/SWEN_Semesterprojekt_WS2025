@@ -5,6 +5,7 @@ using Semesterprojekt.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,8 +19,17 @@ namespace Semesterprojekt.Services
             {
                 throw new UserAlreadyExistsException("User with name " + username + " already exists!");
             }
-            User user = new User(UserRepository.GetNewId(), username, password);
+            User user = new User(UserRepository.GenerateNewId(), username, password);
             UserRepository.SaveUser(user);
+        }
+
+        public static void LoginUser(string username, string password)
+        {
+            if (!UserRepository.UserExists(username))
+            {
+                throw new InvalidCredentialException("Incorrect Username or Password!");
+            }
+            UserRepository.ValidateUser(username, password);
         }
     }
 }

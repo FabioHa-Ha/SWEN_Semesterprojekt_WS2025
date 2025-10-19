@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -86,6 +87,10 @@ namespace Semesterprojekt.Controllers
                             catch (Exception e) when (e is InvalidRequestBodyException || e is UserAlreadyExistsException)
                             {
                                 response = await ErrorResponse(request, response, e, 400);
+                            }
+                            catch (Exception e) when (e is InvalidCredentialException)
+                            {
+                                response = await ErrorResponse(request, response, e, 401);
                             }
                             catch (Exception e)
                             {

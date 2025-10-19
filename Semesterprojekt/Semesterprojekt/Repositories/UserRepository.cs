@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +37,28 @@ namespace Semesterprojekt.Repositories
             File.AppendAllText(filepath, userEntry + Environment.NewLine);
         }
 
-        public static int GetNewId()
+        public static void ValidateUser(string username, string password)
+        {
+            string saltString = "";
+            string savedHasedPassword = "";
+            IEnumerable<string> users = File.ReadAllLines(filepath);
+            foreach (string user in users)
+            {
+                string[] infos = user.Split(";");
+                if (infos[1] == username)
+                {
+                    savedHasedPassword = infos[2];
+                    saltString = infos[3];
+                }
+            }
+            string newHasedPassword = PasswordHasher.HashPassword(password, saltString);
+            if(!savedHasedPassword.Equals(newHasedPassword))
+            {
+                throw new InvalidCredentialException("Incorrect Username or Password!");
+            }
+        }
+
+        public static int GenerateNewId()
         {
             IEnumerable<string> users = File.ReadAllLines(filepath);
             if(users.Count() > 0)

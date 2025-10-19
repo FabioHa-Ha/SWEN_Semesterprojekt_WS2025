@@ -14,9 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="data.csv">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Update="jwtSecretKey.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

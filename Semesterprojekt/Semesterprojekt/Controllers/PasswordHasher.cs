@@ -22,9 +22,15 @@ namespace Semesterprojekt.Controllers
         public static string HashPassword(string password, out string saltString)
         {
             saltString = RandomString(20);
+
+            return HashPassword(password, saltString);
+        }
+
+        public static string HashPassword(string password, string saltString)
+        {
             byte[] salt = Encoding.ASCII.GetBytes(saltString);
 
-            // derive a 512-bit subkey (use HMACSHA256 with 100,000 iterations)
+            // derive a 256-bit subkey (use HMACSHA512 with 100,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
                 salt: salt,
