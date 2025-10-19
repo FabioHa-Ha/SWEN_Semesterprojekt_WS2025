@@ -10,7 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Semesterprojekt.Controllers
+namespace Semesterprojekt.General
 {
     internal class HttpUtility
     {
@@ -20,17 +20,6 @@ namespace Semesterprojekt.Controllers
             bytes = Encoding.UTF8.GetBytes(jsonText);
 
             response.ContentType = "application/json; charset=utf-8";
-            response.ContentLength64 = bytes.Length;
-            await response.OutputStream.WriteAsync(bytes, 0, bytes.Length);
-            return response;
-        }
-
-        public static async Task<HttpListenerResponse> WriteTextToResponse(HttpListenerResponse response, string jsonText)
-        {
-            byte[] bytes;
-            bytes = Encoding.UTF8.GetBytes(jsonText);
-
-            response.ContentType = "text/plain; charset=utf-8";
             response.ContentLength64 = bytes.Length;
             await response.OutputStream.WriteAsync(bytes, 0, bytes.Length);
             return response;

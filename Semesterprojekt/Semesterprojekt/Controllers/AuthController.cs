@@ -1,5 +1,6 @@
 ﻿using Semesterprojekt.DTOs;
 using Semesterprojekt.Exceptions;
+using Semesterprojekt.General;
 using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Semesterprojekt.Controllers
 {
     internal class AuthController
     {
-        public static async Task<HttpListenerResponse> Login(string requestBody, HttpListenerResponse response)
+        public static string Login(string requestBody)
         {
             UserInfoDTO userInfo = JsonSerializer.Deserialize<UserInfoDTO>(requestBody);
             if (userInfo == null || userInfo.username == null || userInfo.password == null)
@@ -22,10 +23,10 @@ namespace Semesterprojekt.Controllers
             }
             AuthService.LoginUser(userInfo.username, userInfo.password);
             JwtDTO jwtDTO = new JwtDTO(HttpUtility.GenerateJwtToken(userInfo.username));
-            return await HttpUtility.WriteJsonToResponse(response, JsonSerializer.Serialize(jwtDTO));
+            return JsonSerializer.Serialize(jwtDTO);
         }
 
-        public static async Task<HttpListenerResponse> Register(string requestBody, HttpListenerResponse response)
+        public static string Register(string requestBody)
         {
             UserInfoDTO userInfo = JsonSerializer.Deserialize<UserInfoDTO>(requestBody);
             if (userInfo == null || userInfo.username == null || userInfo.password == null)
@@ -34,7 +35,7 @@ namespace Semesterprojekt.Controllers
             }
             AuthService.RegisterUser(userInfo.username, userInfo.password);
             JwtDTO jwtDTO = new JwtDTO(HttpUtility.GenerateJwtToken(userInfo.username));
-            return await HttpUtility.WriteJsonToResponse(response, JsonSerializer.Serialize(jwtDTO));
+            return JsonSerializer.Serialize(jwtDTO);
         }
     }
 }

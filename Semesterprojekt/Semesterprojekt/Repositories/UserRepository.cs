@@ -1,5 +1,5 @@
-﻿using Semesterprojekt.Controllers;
-using Semesterprojekt.Entities;
+﻿using Semesterprojekt.Entities;
+using Semesterprojekt.General;
 using System;
 using System.Collections.Generic;
 using System.IO;

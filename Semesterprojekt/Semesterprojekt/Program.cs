@@ -1,4 +1,4 @@
-﻿using Semesterprojekt.Controllers;
+﻿using Semesterprojekt.General;
 using Semesterprojekt.Repositories;
 
 namespace Semesterprojekt

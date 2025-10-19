@@ -1,4 +1,6 @@
-﻿using Semesterprojekt.Exceptions;
+﻿using Semesterprojekt.Controllers;
+using Semesterprojekt.DTOs;
+using Semesterprojekt.Exceptions;
 using Semesterprojekt.Repositories;
 using System;
 using System.Collections.Generic;
@@ -6,24 +8,25 @@ using System.Linq;
 using System.Net;
 using System.Security.Authentication;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Semesterprojekt.Controllers
+namespace Semesterprojekt.General
 {
     public class MRPHttpListener
     {
-        public static async Task<HttpListenerResponse> NotFoundResponse(HttpListenerRequest request, HttpListenerResponse response)
+        public static string NotFoundResponse(HttpListenerRequest request, HttpListenerResponse response)
         {
-            response.StatusCode = 404;
             string responseText = $"Error 404:\nThe requested page: {request.HttpMethod} {request.Url} is not available";
-            return await HttpUtility.WriteTextToResponse(response, responseText);
+            ErrorDTO errorDTO = new ErrorDTO(responseText);
+            return JsonSerializer.Serialize(errorDTO);
         }
 
-        public static async Task<HttpListenerResponse> ErrorResponse(HttpListenerRequest request, HttpListenerResponse response, Exception e, int statusCode)
+        public static string ErrorResponse(HttpListenerRequest request, HttpListenerResponse response, Exception e)
         {
-            response.StatusCode = statusCode;
             string responseText = $"Error:\n" + e.Message;
-            return await HttpUtility.WriteTextToResponse(response, responseText);
+            ErrorDTO errorDTO = new ErrorDTO(responseText);
+            return JsonSerializer.Serialize(errorDTO);
         }
 
         public static async Task RunHttpListener()
@@ -59,6 +62,7 @@ namespace Semesterprojekt.Controllers
                             string requestBodyText = bodyStream.ReadToEnd();
 
                             bool requestHandled = false;
+                            string responseString = "";
                             try
                             {
                                 switch (request.HttpMethod)
@@ -70,11 +74,11 @@ namespace Semesterprojekt.Controllers
                                         {
                                             case "/api/users/login":
                                                 requestHandled = true;
-                                                response = await AuthController.Login(requestBodyText, response);
+                                                responseString = AuthController.Login(requestBodyText);
                                                 break;
                                             case "/api/users/register":
                                                 requestHandled = true;
-                                                response = await AuthController.Register(requestBodyText, response);
+                                                responseString = AuthController.Register(requestBodyText);
                                                 break;
                                         }
                                         break;
@@ -86,21 +90,26 @@ namespace Semesterprojekt.Controllers
                             }
                             catch (Exception e) when (e is InvalidRequestBodyException || e is UserAlreadyExistsException)
                             {
-                                response = await ErrorResponse(request, response, e, 400);
+                                response.StatusCode = 400;
+                                responseString = ErrorResponse(request, response, e);
                             }
                             catch (Exception e) when (e is InvalidCredentialException)
                             {
-                                response = await ErrorResponse(request, response, e, 401);
+                                response.StatusCode = 401;
+                                responseString = ErrorResponse(request, response, e);
                             }
                             catch (Exception e)
                             {
-                                response = await ErrorResponse(request, response, e, 500);
+                                response.StatusCode = 500;
+                                responseString = ErrorResponse(request, response, e);
                                 Console.WriteLine("Unexpected Exception: " + e.Message);
                             }
                             if (!requestHandled)
                             {
-                                response = await NotFoundResponse(request, response);
+                                response.StatusCode = 404;
+                                responseString = NotFoundResponse(request, response);
                             }
+                            response = await HttpUtility.WriteJsonToResponse(response, responseString);
                             response.Close();
                         }
                         catch (Exception e)
