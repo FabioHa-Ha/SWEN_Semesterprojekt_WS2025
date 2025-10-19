@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.DTOs
 {
-    internal class UserInfoDTO
+    public class UserInfoDTO
     {
         public string? username { get; set; }
         public string? password { get; set; }

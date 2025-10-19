@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.Exceptions
 {
-    internal class InvalidUserException : Exception
+    public class InvalidUserException : Exception
     {
         public InvalidUserException(string message) : base(message) { }
     }

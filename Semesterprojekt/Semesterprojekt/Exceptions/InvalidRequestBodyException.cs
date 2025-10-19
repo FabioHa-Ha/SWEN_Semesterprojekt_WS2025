@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.Exceptions
 {
-    internal class InvalidRequestBodyException : Exception
+    public class InvalidRequestBodyException : Exception
     {
         public InvalidRequestBodyException(string message) : base(message) { }
     }

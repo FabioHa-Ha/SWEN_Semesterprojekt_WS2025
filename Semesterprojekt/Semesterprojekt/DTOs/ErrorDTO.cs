@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.DTOs
 {
-    internal class ErrorDTO
+    public class ErrorDTO
     {
         public ErrorDTO(string error) 
         {

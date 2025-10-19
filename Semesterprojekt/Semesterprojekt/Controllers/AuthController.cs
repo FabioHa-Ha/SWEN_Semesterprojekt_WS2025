@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.Controllers
 {
-    internal class AuthController
+    public class AuthController
     {
         public static string Login(string requestBody)
         {

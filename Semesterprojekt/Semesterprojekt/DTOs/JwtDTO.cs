@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.DTOs
 {
-    internal class JwtDTO
+    public class JwtDTO
     {
         public JwtDTO(string token)
         {

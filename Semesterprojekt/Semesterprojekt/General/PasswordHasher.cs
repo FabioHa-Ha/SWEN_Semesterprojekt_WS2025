@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.General
 {
-    internal class PasswordHasher
+    public class PasswordHasher
     {
         private static Random random = new Random();
 
