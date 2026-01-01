@@ -15,7 +15,7 @@ namespace SemesterprojektTests
         {
             string password = "passwordInput1234!";
             string salt = "";
-            string hash = PasswordHasher.HashPassword(password, salt);
+            string hash = PasswordHasher.HashPassword(password, out salt);
 
             Assert.AreEqual(hash, PasswordHasher.HashPassword(password, salt));
         }
