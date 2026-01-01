@@ -9,8 +9,8 @@ namespace Semesterprojekt.Entities
     public class Movie : MediaEntry
     {
         public Movie(int mediaEntryId, string title, string description, int releaseYear, 
-            string genre, int ageRestriction, int creator) : base(mediaEntryId, title, description, 
-                releaseYear, genre, ageRestriction, creator)
+            int ageRestriction, int creator) : base(mediaEntryId, title, description, 
+                releaseYear, ageRestriction, creator)
         {
         }
     }

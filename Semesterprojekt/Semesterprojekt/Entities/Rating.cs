@@ -10,8 +10,8 @@ namespace Semesterprojekt.Entities
     public class Rating
     {
         private int _ratingId;
-        private int _userId;
-        private int _mediaEntryId;
+        private int _creator;
+        private int _ofMediaEntry;
         private int _starRating;
         private string? _comment;
         private DateTime _createdAt;
@@ -23,14 +23,14 @@ namespace Semesterprojekt.Entities
             get => _ratingId;
         }
 
-        public int UserId
+        public int Creator
         {
-            get => _userId;
+            get => _creator;
         }
 
-        public int MediaEntryId
+        public int OfMediaEntry
         {
-            get => _mediaEntryId;
+            get => _ofMediaEntry;
         }
 
         public int StarRating
@@ -67,11 +67,11 @@ namespace Semesterprojekt.Entities
             set => _confirmedByAuthor = value;
         }
 
-        public Rating(int ratingId, int userId, int mediaEntryId, int starRating, string comment)
+        public Rating(int ratingId, int creator, int ofMediaEntry, int starRating, string comment)
         {
             _ratingId = ratingId;   // TODO: ID generieren lassen
-            _userId = userId;
-            _mediaEntryId = mediaEntryId;
+            _creator = creator;
+            _ofMediaEntry = ofMediaEntry;
             StarRating = starRating;
             _comment = comment;
             _createdAt = DateTime.UtcNow;
