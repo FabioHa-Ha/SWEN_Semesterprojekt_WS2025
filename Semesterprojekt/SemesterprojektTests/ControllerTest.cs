@@ -17,9 +17,9 @@ namespace SemesterprojektTests
     [TestClass]
     public sealed class ControllerTest
     {
-        private AuthController authController;
+        private UserController userController;
 
-        #region AuthController Test
+        #region UserController Test
         [TestInitialize]
         public void Setup()
         {
@@ -27,9 +27,9 @@ namespace SemesterprojektTests
 
             UserRepository userRepository = new UserRepository(databaseConnector);
 
-            AuthService authService = new AuthService(userRepository);
+            UserService userService = new UserService(userRepository);
 
-            authController = new AuthController(authService);
+            userController = new UserController(userService);
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace SemesterprojektTests
             user.password = "password";
 
             string requestString = JsonSerializer.Serialize(user);
-            string responseString = authController.Register(requestString);
+            string responseString = userController.Register(requestString);
             JwtDTO jwtDTO = JsonSerializer.Deserialize<JwtDTO>(responseString);
 
             Assert.IsNotNull(jwtDTO.token);
@@ -54,9 +54,9 @@ namespace SemesterprojektTests
             user.password = "password";
 
             string requestString = JsonSerializer.Serialize(user);
-            string responseString = authController.Register(requestString);
+            string responseString = userController.Register(requestString);
 
-            Assert.ThrowsException<UserAlreadyExistsException>(() => authController.Register(requestString));
+            Assert.ThrowsException<UserAlreadyExistsException>(() => userController.Register(requestString));
         }
 
         [TestMethod]
@@ -67,9 +67,9 @@ namespace SemesterprojektTests
             user.password = "password";
 
             string requestString = JsonSerializer.Serialize(user);
-            authController.Register(requestString);
+            userController.Register(requestString);
 
-            string responseString = authController.Login(requestString);
+            string responseString = userController.Login(requestString);
             JwtDTO jwtDTO = JsonSerializer.Deserialize<JwtDTO>(responseString);
         }
 
@@ -81,11 +81,11 @@ namespace SemesterprojektTests
             user.password = "password";
 
             string requestString = JsonSerializer.Serialize(user);
-            authController.Register(requestString);
+            userController.Register(requestString);
 
             user.password = "password1";
             requestString = JsonSerializer.Serialize(user);
-            Assert.ThrowsException<InvalidCredentialException>(() => authController.Login(requestString));
+            Assert.ThrowsException<InvalidCredentialException>(() => userController.Login(requestString));
         }
         #endregion
     }

@@ -13,11 +13,11 @@ namespace Semesterprojekt
 
             UserRepository userRepository = new UserRepository(databaseConnector);
 
-            AuthService authService = new AuthService(userRepository);
+            UserService userService = new UserService(userRepository);
 
-            AuthController authController = new AuthController(authService);
+            UserController userController = new UserController(userService);
 
-            await MRPHttpListener.RunHttpListener(authController);
+            await MRPHttpListener.RunHttpListener(userController);
         }
     }
 }

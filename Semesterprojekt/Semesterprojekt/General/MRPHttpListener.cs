@@ -29,7 +29,7 @@ namespace Semesterprojekt.General
             return JsonSerializer.Serialize(errorDTO);
         }
 
-        public static async Task RunHttpListener(AuthController authController)
+        public static async Task RunHttpListener(UserController userController)
         {
             var listener = new HttpListener();
 

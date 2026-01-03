@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.Controllers
 {
-    public class AuthController
+    public class UserController
     {
-        public AuthService authService;
+        public UserService userService;
 
-        public AuthController(AuthService authService)
+        public UserController(UserService userService)
         {
-            this.authService = authService;
+            this.userService = userService;
         }
 
         public string Login(string requestBody)
@@ -28,7 +28,7 @@ namespace Semesterprojekt.Controllers
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
-            authService.LoginUser(userInfo.username, userInfo.password);
+            userService.LoginUser(userInfo.username, userInfo.password);
             JwtDTO jwtDTO = new JwtDTO(HttpUtility.GenerateJwtToken(userInfo.username));
             return JsonSerializer.Serialize(jwtDTO);
         }
@@ -40,7 +40,7 @@ namespace Semesterprojekt.Controllers
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
-            authService.RegisterUser(userInfo.username, userInfo.password);
+            userService.RegisterUser(userInfo.username, userInfo.password);
             JwtDTO jwtDTO = new JwtDTO(HttpUtility.GenerateJwtToken(userInfo.username));
             return JsonSerializer.Serialize(jwtDTO);
         }
