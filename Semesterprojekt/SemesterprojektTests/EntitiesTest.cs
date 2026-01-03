@@ -15,11 +15,10 @@ namespace SemesterprojektTests
             string genre = "Sci Fi";
             int ageRestriction = 12;
             int creatorId = 1;
-            Movie movie = new Movie(1, title, description, releaseYear, genre, ageRestriction, creatorId);
+            Movie movie = new Movie(1, title, description, releaseYear, ageRestriction, creatorId);
             Assert.AreEqual(title, movie.Title);
             Assert.AreEqual(description, movie.Description);
             Assert.AreEqual(releaseYear, movie.ReleaseYear);
-            Assert.IsTrue(movie.Genres.Contains(genre));
             Assert.AreEqual(ageRestriction, movie.AgeRestriction);
             Assert.AreEqual(creatorId, movie.Creator);
         }
@@ -33,11 +32,10 @@ namespace SemesterprojektTests
             string genre = "Arcade";
             int ageRestriction = 0;
             int creatorId = 1;
-            Game game = new Game(1, title, description, releaseYear, genre, ageRestriction, creatorId);
+            Game game = new Game(1, title, description, releaseYear, ageRestriction, creatorId);
             Assert.AreEqual(title, game.Title);
             Assert.AreEqual(description, game.Description);
             Assert.AreEqual(releaseYear, game.ReleaseYear);
-            Assert.IsTrue(game.Genres.Contains(genre));
             Assert.AreEqual(ageRestriction, game.AgeRestriction);
             Assert.AreEqual(creatorId, game.Creator);
         }
@@ -51,11 +49,10 @@ namespace SemesterprojektTests
             string genre = "Cartoon";
             int ageRestriction = 7;
             int creatorId = 1;
-            Series series = new Series(1, title, description, releaseYear, genre, ageRestriction, creatorId);
+            Series series = new Series(1, title, description, releaseYear, ageRestriction, creatorId);
             Assert.AreEqual(title, series.Title);
             Assert.AreEqual(description, series.Description);
             Assert.AreEqual(releaseYear, series.ReleaseYear);
-            Assert.IsTrue(series.Genres.Contains(genre));
             Assert.AreEqual(ageRestriction, series.AgeRestriction);
             Assert.AreEqual(creatorId, series.Creator);
         }
@@ -68,8 +65,8 @@ namespace SemesterprojektTests
             int starRating = 3;
             string comment = "Nice!";
             Rating rating = new Rating(1, userId, mediaEntryId, starRating, comment);
-            Assert.AreEqual(userId, rating.UserId);
-            Assert.AreEqual(mediaEntryId, rating.MediaEntryId);
+            Assert.AreEqual(userId, rating.Creator);
+            Assert.AreEqual(mediaEntryId, rating.OfMediaEntry);
             Assert.AreEqual(starRating, rating.StarRating);
             Assert.AreEqual(comment, rating.Comment);
         }

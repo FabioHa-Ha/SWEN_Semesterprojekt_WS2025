@@ -1,4 +1,5 @@
-﻿using Semesterprojekt.Entities;
+﻿using Npgsql;
+using Semesterprojekt.Entities;
 using Semesterprojekt.General;
 using System;
 using System.Collections.Generic;
@@ -12,60 +13,90 @@ namespace Semesterprojekt.Repositories
 {
     public class UserRepository
     {
-        static string filepath = "../../../data.csv";
+        private DatabaseConnector databaseConnector;
 
-        public static bool UserExists(string username)
+        public UserRepository(DatabaseConnector databaseConnector)
         {
-            IEnumerable<string> users = File.ReadAllLines(filepath);
-            foreach (string user in users)
-            {
-                string[] infos = user.Split(";");
-                if (infos[1] == username)
-                {
-                    return true;
-                }
-            }
-            return false;
+            this.databaseConnector = databaseConnector;
         }
 
-        public static void SaveUser(User user)
+        public bool UserExists(string username)
+        {
+            bool userExists = false;
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT user_id FROM users WHERE username = @username";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("username", username);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userExists = true;
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return userExists;
+        }
+
+        public void SaveUser(string username, string password)
         {
             string saltString;
-            string hashedPassword = PasswordHasher.HashPassword(user.Password, out saltString);
-            string userEntry = user.UserId + ";" + user.Username + ";" + hashedPassword + ";" + saltString;
+            string hashedPassword = PasswordHasher.HashPassword(password, out saltString);
+            string sql = "INSERT INTO users (username, password, salt_string) VALUES (@username, @password, @salt_string)";
 
-            File.AppendAllText(filepath, userEntry + Environment.NewLine);
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("username", username);
+                    command.Parameters.AddWithValue("password", hashedPassword);
+                    command.Parameters.AddWithValue("salt_string", saltString);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
         }
 
-        public static void ValidateUser(string username, string password)
+        public void ValidateUser(string username, string password)
         {
-            string saltString = "";
+            string savedSaltString = "";
             string savedHasedPassword = "";
-            IEnumerable<string> users = File.ReadAllLines(filepath);
-            foreach (string user in users)
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
             {
-                string[] infos = user.Split(";");
-                if (infos[1] == username)
+                connection.Open();
+                string query = "SELECT password, salt_string FROM users WHERE username = @username";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
                 {
-                    savedHasedPassword = infos[2];
-                    saltString = infos[3];
+                    command.Parameters.AddWithValue("username", username);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            savedHasedPassword = reader.GetString(0);
+                            savedSaltString = reader.GetString(1);
+                        }
+                    }
                 }
+                connection.Close();
             }
-            string newHasedPassword = PasswordHasher.HashPassword(password, saltString);
+
+            string newHasedPassword = PasswordHasher.HashPassword(password, savedSaltString);
             if(!savedHasedPassword.Equals(newHasedPassword))
             {
                 throw new InvalidCredentialException("Incorrect Username or Password!");
             }
-        }
-
-        public static int GenerateNewId()
-        {
-            IEnumerable<string> users = File.ReadAllLines(filepath);
-            if(users.Count() > 0)
-            {
-                return Int32.Parse(users.Last().Split(";")[0]) + 1;
-            }
-            return 0;
         }
     }
 }

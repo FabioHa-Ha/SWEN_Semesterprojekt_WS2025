@@ -1,5 +1,7 @@
-﻿using Semesterprojekt.General;
+﻿using Semesterprojekt.Controllers;
+using Semesterprojekt.General;
 using Semesterprojekt.Repositories;
+using Semesterprojekt.Services;
 
 namespace Semesterprojekt
 {
@@ -7,7 +9,15 @@ namespace Semesterprojekt
     {
         static async Task Main(string[] args)
         {
-            await MRPHttpListener.RunHttpListener();
+            DatabaseConnector databaseConnector = new DatabaseConnector();
+
+            UserRepository userRepository = new UserRepository(databaseConnector);
+
+            AuthService authService = new AuthService(userRepository);
+
+            AuthController authController = new AuthController(authService);
+
+            await MRPHttpListener.RunHttpListener(authController);
         }
     }
 }

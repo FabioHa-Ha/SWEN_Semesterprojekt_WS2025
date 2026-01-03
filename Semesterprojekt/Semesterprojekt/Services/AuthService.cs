@@ -11,25 +11,31 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.Services
 {
-    internal class AuthService
+    public class AuthService
     {
-        public static void RegisterUser(string username, string password)
+        UserRepository userRepository;
+
+        public AuthService(UserRepository userRepository)
         {
-            if(UserRepository.UserExists(username))
+            this.userRepository = userRepository;
+        }
+
+        public void RegisterUser(string username, string password)
+        {
+            if(userRepository.UserExists(username))
             {
                 throw new UserAlreadyExistsException("User with name " + username + " already exists!");
             }
-            User user = new User(UserRepository.GenerateNewId(), username, password);
-            UserRepository.SaveUser(user);
+            userRepository.SaveUser(username, password);
         }
 
-        public static void LoginUser(string username, string password)
+        public void LoginUser(string username, string password)
         {
-            if (!UserRepository.UserExists(username))
+            if (!userRepository.UserExists(username))
             {
                 throw new InvalidCredentialException("Incorrect Username or Password!");
             }
-            UserRepository.ValidateUser(username, password);
+            userRepository.ValidateUser(username, password);
         }
     }
 }

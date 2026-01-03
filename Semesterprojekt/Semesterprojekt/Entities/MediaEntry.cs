@@ -8,11 +8,9 @@ namespace Semesterprojekt.Entities
         protected string _title;
         protected string _description;
         protected int _releaseYear;
-        protected HashSet<string> _genres;
+        protected HashSet<int> _genres;
         protected int _ageRestriction;
         protected int _creator;
-        protected int creator;
-        protected HashSet<int> _ratings;
 
         public int MediaEntryId
         {
@@ -34,7 +32,7 @@ namespace Semesterprojekt.Entities
             get => _releaseYear;
             set => _releaseYear = value;
         }
-        public HashSet<string> Genres
+        public HashSet<int> Genres
         {
             get => _genres;
         }
@@ -48,36 +46,25 @@ namespace Semesterprojekt.Entities
             get => _creator;
         }
 
-        public HashSet<int> Ratings
-        {
-            get => _ratings;
-        }
-
         public double AverageScore
         {
             get
             {
-                if(Ratings.Count > 0)
-                {
-                    return Ratings.Average();
-                }
                 return 0;
             }
         }
 
 
-        public MediaEntry(int mediaEntryId, string title, string description, int releaseYear, string genre,
+        public MediaEntry(int mediaEntryId, string title, string description, int releaseYear,
             int ageRestriction, int creator)
         {
             _mediaEntryId = mediaEntryId;   // TODO: ID generieren lassen
             _title = title;
             _description = description;
             _releaseYear = releaseYear;
-            _genres = new HashSet<string>();
-            _genres.Add(genre);
+            _genres = new HashSet<int>();
             _ageRestriction = ageRestriction;
             _creator = creator;
-            _ratings = new HashSet<int>();
         }
     }
 }

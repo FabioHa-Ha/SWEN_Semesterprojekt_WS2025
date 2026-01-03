@@ -1,7 +1,8 @@
 CREATE TABLE users (
-	user_id 	INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	username 	VARCHAR(50) NOT NULL UNIQUE,
-	password 	VARCHAR(50) NOT NULL
+	user_id 		INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	username 		VARCHAR(50) NOT NULL UNIQUE,
+	password 		VARCHAR(50) NOT NULL,
+	salt_string 	VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE genres (
@@ -56,9 +57,9 @@ INSERT INTO media_types (media_type_id, name) VALUES (1, 'Movie');
 INSERT INTO media_types (media_type_id, name) VALUES (2, 'Series');
 INSERT INTO media_types (media_type_id, name) VALUES (3, 'Game');
 
-INSERT INTO users (username, password) VALUES ('user1', '1234');
-INSERT INTO users (username, password) VALUES ('user2', 'abcd');
-INSERT INTO users (username, password) VALUES ('user3', 'passwort');
+INSERT INTO users (username, password, salt_string) VALUES ('user1', '9EwhQcJ3iMB50R0e3lrr8vx5RLZ0tQT0lIEFcYIZna0=', '03ZSRGFD4HKAJ97J5TC0'); -- 1234
+INSERT INTO users (username, password, salt_string) VALUES ('user2', 'v+5FHWd2CwZm9EKwJwk0PhD9/ccP7zqTrIzMwF7O+m4=', '2702MVI4NNRKKL2OR72Q'); -- abcd
+INSERT INTO users (username, password, salt_string) VALUES ('user3', '8xH8J8aHOmMWWyAup80tEkEop2sAFPxSczATeJbUHZ8=', 'IXYLQHRSOL5C0O7SJXR2'); -- password
 
 INSERT INTO genres (name) VALUES ('Sci Fi');
 INSERT INTO genres (name) VALUES ('Fantasy');

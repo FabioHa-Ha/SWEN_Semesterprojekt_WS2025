@@ -15,14 +15,14 @@ namespace Semesterprojekt.BusinessLayer
         {
             int newRatingId = 1;
             Rating rating = new Rating(newRatingId, user.UserId, mediaEntry.MediaEntryId, starRating, comment);
-            mediaEntry.Ratings.Add(rating.RatingId);
+            //mediaEntry.Ratings.Add(rating.RatingId);
             RatingRepository.CreateRating(rating);
             // TODO: Entity Repository Update
         }
 
         public void LikeRating(User user, Rating rating)
         {
-            if (rating.UserId != user.UserId)
+            if (rating.Creator != user.UserId)
             {
                 rating.LikedBy.Add(user.UserId);    // TODO: What happens when a user already liked a rating?
                 RatingRepository.UpdateRating(rating);
@@ -35,7 +35,7 @@ namespace Semesterprojekt.BusinessLayer
 
         public void EditRating(User user, Rating rating, int newStarRating, string newComment)
         {
-            if (rating.UserId == user.UserId)
+            if (rating.Creator == user.UserId)
             {
                 rating.StarRating = newStarRating;
                 rating.Comment = newComment;
@@ -49,7 +49,7 @@ namespace Semesterprojekt.BusinessLayer
 
         public void ConfirmRating(Rating rating, User user)
         {
-            if (rating.UserId == user.UserId) 
+            if (rating.Creator == user.UserId) 
             { 
                 rating.ConfirmedByAuthor = true;
                 RatingRepository.UpdateRating(rating);

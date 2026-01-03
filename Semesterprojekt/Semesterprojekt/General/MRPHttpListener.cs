@@ -29,7 +29,7 @@ namespace Semesterprojekt.General
             return JsonSerializer.Serialize(errorDTO);
         }
 
-        public static async Task RunHttpListener()
+        public static async Task RunHttpListener(AuthController authController)
         {
             var listener = new HttpListener();
 
@@ -74,11 +74,11 @@ namespace Semesterprojekt.General
                                         {
                                             case "/api/users/login":
                                                 requestHandled = true;
-                                                responseString = AuthController.Login(requestBodyText);
+                                                responseString = authController.Login(requestBodyText);
                                                 break;
                                             case "/api/users/register":
                                                 requestHandled = true;
-                                                responseString = AuthController.Register(requestBodyText);
+                                                responseString = authController.Register(requestBodyText);
                                                 break;
                                         }
                                         break;
