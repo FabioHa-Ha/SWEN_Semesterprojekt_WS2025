@@ -1,5 +1,6 @@
 ﻿using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
+using Semesterprojekt.Exceptions;
 using Semesterprojekt.Repositories;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,20 @@ namespace Semesterprojekt.Services
                 Genre genre = genreService.GetOrCreateGenre(genreName);
                 mediaEntryRepository.AssignGenreToMediaEntry(genre.GenreId, newId);
             }
+        }
+
+        public void DeleteMediaEntry(int mediaEntryId, int userId)
+        {
+            MediaEntry mediaEntry = GetMediaEntry(mediaEntryId);
+            if (mediaEntry == null) 
+            {
+                throw new UnkownMediaEntryException("Invalid id!");
+            }
+            if (mediaEntry.Creator != userId)
+            {
+                throw new UnauthorizedAccessException("Media Entries can only be deleted by its creator!");
+            }
+            mediaEntryRepository.DeleteMediaEntry(mediaEntryId);
         }
     }
 }

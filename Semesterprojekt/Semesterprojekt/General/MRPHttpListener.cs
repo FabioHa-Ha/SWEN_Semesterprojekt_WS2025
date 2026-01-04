@@ -123,6 +123,14 @@ namespace Semesterprojekt.General
                                         }
                                         break;
                                     case "DELETE":
+                                        switch (true)
+                                        {
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                mediaEntryController.DeleteMedia(authHeader, urlParts[3]);
+                                                break;
+                                        }
                                         break;
                                 }
                             }
@@ -135,6 +143,11 @@ namespace Semesterprojekt.General
                             catch (Exception e) when (e is InvalidCredentialException)
                             {
                                 response.StatusCode = 401;
+                                responseString = ErrorResponse(request, response, e);
+                            }
+                            catch (Exception e) when (e is UnauthorizedAccessException)
+                            {
+                                response.StatusCode = 403;
                                 responseString = ErrorResponse(request, response, e);
                             }
                             catch (Exception e)

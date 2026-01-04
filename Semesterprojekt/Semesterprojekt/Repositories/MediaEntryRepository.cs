@@ -157,5 +157,24 @@ namespace Semesterprojekt.Repositories
                 connection.Close();
             }
         }
+
+        public void DeleteMediaEntry(int mediaEntryId)
+        {
+            string sql = "DELETE FROM media_entries " +
+                            "WHERE media_entry_id = @media_entry_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }

@@ -43,9 +43,9 @@ namespace Semesterprojekt.Controllers
             return mediaType;
         }
 
-        public string GetMediaEntry(string meidaEntryIdString)
+        public string GetMediaEntry(string mediaEntryIdString)
         {
-            int mediaEntryId = Int32.Parse(meidaEntryIdString);
+            int mediaEntryId = Int32.Parse(mediaEntryIdString);
             MediaEntry? mediaEntry = mediaEntryService.GetMediaEntry(mediaEntryId);
             if (mediaEntry == null)
             {
@@ -86,6 +86,14 @@ namespace Semesterprojekt.Controllers
             string username = HttpUtility.ValidateJwtToken(token);
             User user = userService.GetUserByUsername(username);
             mediaEntryService.CreateMediaEntry(mediaEntryDTO, user.UserId);
+        }
+
+        public void DeleteMedia(string token, string mediaEntryIdString)
+        {
+            int mediaEntryId = Int32.Parse(mediaEntryIdString);
+            string username = HttpUtility.ValidateJwtToken(token);
+            User user = userService.GetUserByUsername(username);
+            mediaEntryService.DeleteMediaEntry(mediaEntryId, user.UserId);
         }
     }
 }
