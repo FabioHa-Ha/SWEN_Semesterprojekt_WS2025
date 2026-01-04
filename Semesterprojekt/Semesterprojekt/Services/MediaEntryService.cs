@@ -21,5 +21,10 @@ namespace Semesterprojekt.Services
         {
             return mediaEntryRepository.GetMediaEntry(id);
         }
+
+        public List<MediaEntry> GetAllMediaEntries()
+        {
+            return mediaEntryRepository.GetAllMediaEntries();
+        }
     }
 }

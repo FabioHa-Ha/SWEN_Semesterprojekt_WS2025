@@ -22,6 +22,24 @@ namespace Semesterprojekt.Controllers
             this.genreService = genreService;
         }
 
+        private string GetMediaType(MediaEntry mediaEntry)
+        {
+            string mediaType = "";
+            if (mediaEntry is Movie)
+            {
+                mediaType = "Movie";
+            }
+            else if (mediaEntry is Series)
+            {
+                mediaType = "Series";
+            }
+            else if (mediaEntry is Game)
+            {
+                mediaType = "Game";
+            }
+            return mediaType;
+        }
+
         public string GetMediaEntry(string meidaEntryIdString)
         {
             int mediaEntryId = Int32.Parse(meidaEntryIdString);
@@ -31,22 +49,28 @@ namespace Semesterprojekt.Controllers
                 throw new UnkownMediaEntryException("Invalid Id!");
             }
             string[] genres = genreService.GetGenresOfMediaEntry(mediaEntryId);
-            string mediaType = "";
-            if(mediaEntry is Movie)
-            {
-                mediaType = "Movie";
-            }
-            else if(mediaEntry is Series)
-            {
-                mediaType = "Series";
-            }
-            else if(mediaEntry is Game)
-            {
-                mediaType = "Game";
-            }
+            string mediaType = GetMediaType(mediaEntry);
             MediaEntryDTO mediaEntryDTO = new MediaEntryDTO(mediaEntry.Title, mediaEntry.Description,
                 mediaType, mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres);
             return JsonSerializer.Serialize(mediaEntryDTO);
+        }
+
+        public string GetAllMediaEntries()
+        {
+            List<MediaEntry> mediaEntries = mediaEntryService.GetAllMediaEntries();
+            string[] genres;
+            string mediaType;
+            List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
+            foreach (MediaEntry mediaEntry in mediaEntries)
+            {
+                genres = genreService.GetGenresOfMediaEntry(mediaEntry.MediaEntryId);
+                mediaType = GetMediaType(mediaEntry);
+                MediaEntryDTO mediaEntryDTO = new MediaEntryDTO(mediaEntry.Title, mediaEntry.Description,
+                    mediaType, mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres);
+                mediaEntryDTOs.Add(mediaEntryDTO);
+            }
+            MediaEntiresDTO mediaEntiresDTO = new MediaEntiresDTO(mediaEntryDTOs.ToArray());
+            return JsonSerializer.Serialize(mediaEntiresDTO);
         }
     }
 }

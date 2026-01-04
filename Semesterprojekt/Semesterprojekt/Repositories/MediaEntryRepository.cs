@@ -60,5 +60,51 @@ namespace Semesterprojekt.Repositories
             }
             return mediaEntry;
         }
+
+        public List<MediaEntry> GetAllMediaEntries()
+        {
+            List<MediaEntry> mediaEntries = new List<MediaEntry>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT media_entry_id, media_type, title, description, " +
+                                        "release_year, age_restriction, creator " +
+                                    "FROM media_entries";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MediaEntry mediaEntry = null;
+                            int id = reader.GetInt32(0);
+                            string mediaType = reader.GetString(1);
+                            switch (mediaType)
+                            {
+                                case "Movie":
+                                    mediaEntry = new Movie(id);
+                                    break;
+                                case "Series":
+                                    mediaEntry = new Series(id);
+                                    break;
+                                case "Game":
+                                    mediaEntry = new Game(id);
+                                    break;
+                            }
+                            mediaEntry.Title = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                            mediaEntry.Description = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                            mediaEntry.ReleaseYear = reader.IsDBNull(4) ? -1 : reader.GetInt32(4);
+                            mediaEntry.AgeRestriction = reader.IsDBNull(5) ? -1 : reader.GetInt32(5);
+                            mediaEntry.Creator = reader.GetInt32(5);
+                            mediaEntries.Add(mediaEntry);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return mediaEntries;
+        }
     }
 }
