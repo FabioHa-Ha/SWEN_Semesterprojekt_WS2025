@@ -30,7 +30,8 @@ namespace Semesterprojekt.General
             return JsonSerializer.Serialize(errorDTO);
         }
 
-        public static async Task RunHttpListener(UserController userController, MediaEntryController mediaEntryController)
+        public static async Task RunHttpListener(UserController userController, 
+            MediaEntryController mediaEntryController, RatingController ratingController)
         {
             var listener = new HttpListener();
 
@@ -84,14 +85,14 @@ namespace Semesterprojekt.General
                                                 urlParts = url.Split("/");
                                                 responseString = userController.GetProfile(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media").IsMatch(url):
-                                                requestHandled = true;
-                                                responseString = mediaEntryController.GetAllMediaEntries();
-                                                break;
                                             case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 responseString = mediaEntryController.GetMediaEntry(urlParts[3]);
+                                                break;
+                                            case bool _ when new Regex(@"^/api/media").IsMatch(url):
+                                                requestHandled = true;
+                                                responseString = mediaEntryController.GetAllMediaEntries();
                                                 break;
                                         }
                                         break;
@@ -105,6 +106,11 @@ namespace Semesterprojekt.General
                                             case bool _ when new Regex(@"^/api/users/register").IsMatch(url):
                                                 requestHandled = true;
                                                 responseString = userController.Register(requestBodyText);
+                                                break;
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*/rate").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                ratingController.CreateRating(authHeader, urlParts[3], requestBodyText);
                                                 break;
                                             case bool _ when new Regex(@"^/api/media").IsMatch(url):
                                                 requestHandled = true;
@@ -140,7 +146,9 @@ namespace Semesterprojekt.General
                                 }
                             }
                             catch (Exception e) when (e is InvalidRequestBodyException || 
-                                e is UserAlreadyExistsException || e is UnkownMediaEntryException)
+                                e is UserAlreadyExistsException || e is UnkownMediaEntryException || 
+                                e is InvalidStarRatingExcption || e is InvalidAccessException ||
+                                e is UnkownRatingException)
                             {
                                 response.StatusCode = 400;
                                 responseString = ErrorResponse(request, response, e);

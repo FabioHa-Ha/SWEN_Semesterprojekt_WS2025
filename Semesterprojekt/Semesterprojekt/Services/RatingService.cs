@@ -1,4 +1,5 @@
-﻿using Semesterprojekt.Entities;
+﻿using Semesterprojekt.DTOs;
+using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
 using Semesterprojekt.PersistenceLayer;
 using System;
@@ -9,15 +10,31 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.BusinessLayer
 {
-    internal class RatingService
+    public class RatingService
     {
-        public void AddRating(MediaEntry mediaEntry, User user, int starRating, string comment)
+        RatingRepository ratingRepository;
+
+        public RatingService(RatingRepository ratingRepository)
         {
-            int newRatingId = 1;
-            Rating rating = new Rating(newRatingId, user.UserId, mediaEntry.MediaEntryId, starRating, comment);
-            //mediaEntry.Ratings.Add(rating.RatingId);
-            RatingRepository.CreateRating(rating);
-            // TODO: Entity Repository Update
+            this.ratingRepository = ratingRepository;
+        }
+
+        public void CreateRating(MediaEntry mediaEntry, int userId, RatingDTO ratingDTO)
+        {
+            Rating? rating = ratingRepository.GetRating(userId, mediaEntry.MediaEntryId);
+            if (rating != null)
+            {
+                throw new InvalidAccessException("You already rated this entry!");
+            }
+            if (mediaEntry.Creator == userId)
+            {
+                throw new InvalidAccessException("You cannot rate on your own entry!");
+            }
+            if (ratingDTO.stars < 1 || ratingDTO.stars > 5)
+            {
+                throw new InvalidStarRatingExcption("Invalid star rating!");
+            }
+            ratingRepository.CreateRating(mediaEntry.MediaEntryId, userId, ratingDTO);
         }
 
         public void LikeRating(User user, Rating rating)
@@ -25,7 +42,7 @@ namespace Semesterprojekt.BusinessLayer
             if (rating.Creator != user.UserId)
             {
                 rating.LikedBy.Add(user.UserId);    // TODO: What happens when a user already liked a rating?
-                RatingRepository.UpdateRating(rating);
+                ratingRepository.UpdateRating(rating);
             }
             else
             {
@@ -39,7 +56,7 @@ namespace Semesterprojekt.BusinessLayer
             {
                 rating.StarRating = newStarRating;
                 rating.Comment = newComment;
-                RatingRepository.UpdateRating(rating);
+                ratingRepository.UpdateRating(rating);
             }
             else
             {
@@ -52,7 +69,7 @@ namespace Semesterprojekt.BusinessLayer
             if (rating.Creator == user.UserId) 
             { 
                 rating.ConfirmedByAuthor = true;
-                RatingRepository.UpdateRating(rating);
+                ratingRepository.UpdateRating(rating);
             }
             else
             {

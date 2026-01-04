@@ -45,7 +45,7 @@ CREATE TABLE ratings (
 	star_rating				INT,
 	rating_comment			VARCHAR(500),
 	created_at 				TIMESTAMP DEFAULT current_timestamp,
-	confirmed_by_author		BOOLEAN
+	confirmed_by_author		BOOLEAN NOT NULL
 );
 
 CREATE TABLE rating_likes (

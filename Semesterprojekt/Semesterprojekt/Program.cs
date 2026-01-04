@@ -1,5 +1,7 @@
-﻿using Semesterprojekt.Controllers;
+﻿using Semesterprojekt.BusinessLayer;
+using Semesterprojekt.Controllers;
 using Semesterprojekt.General;
+using Semesterprojekt.PersistenceLayer;
 using Semesterprojekt.Repositories;
 using Semesterprojekt.Services;
 
@@ -14,15 +16,19 @@ namespace Semesterprojekt
             UserRepository userRepository = new UserRepository(databaseConnector);
             GenreRepository genreRepository = new GenreRepository(databaseConnector);
             MediaEntryRepository mediaEntryRepository = new MediaEntryRepository(databaseConnector);
+            RatingRepository ratingRepository = new RatingRepository(databaseConnector);
 
             GenreService genreService = new GenreService(genreRepository);
             UserService userService = new UserService(userRepository, genreService);
             MediaEntryService mediaEntryService = new MediaEntryService(mediaEntryRepository, genreService);
+            RatingService ratingService = new RatingService(ratingRepository);
 
             UserController userController = new UserController(userService, genreService);
-            MediaEntryController mediaEntryController = new MediaEntryController(mediaEntryService, genreService, userService);
+            MediaEntryController mediaEntryController = new MediaEntryController(mediaEntryService, genreService,
+                userService);
+            RatingController ratingController = new RatingController(ratingService, userService, mediaEntryService);
 
-            await MRPHttpListener.RunHttpListener(userController, mediaEntryController);
+            await MRPHttpListener.RunHttpListener(userController, mediaEntryController, ratingController);
         }
     }
 }
