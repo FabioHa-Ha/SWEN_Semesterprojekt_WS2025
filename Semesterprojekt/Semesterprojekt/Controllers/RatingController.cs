@@ -105,5 +105,22 @@ namespace Semesterprojekt.Controllers
             }
             ratingService.ConfirmRating(user.UserId, rating);
         }
+
+        public void DeleteRating(string token, string ratingIdString)
+        {
+            int ratingId = Int32.Parse(ratingIdString);
+            string username = HttpUtility.ValidateJwtToken(token);
+            if (username == "")
+            {
+                throw new InvalidCredentialException("Invalid Token!");
+            }
+            User user = userService.GetUserByUsername(username);
+            Rating? rating = ratingService.GetRating(ratingId);
+            if (rating == null)
+            {
+                throw new UnkownRatingException("Invalid id!");
+            }
+            ratingService.DeleteRating(user.UserId, rating);
+        }
     }
 }

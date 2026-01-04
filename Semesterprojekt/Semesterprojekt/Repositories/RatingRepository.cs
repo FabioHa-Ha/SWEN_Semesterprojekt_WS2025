@@ -194,5 +194,24 @@ namespace Semesterprojekt.PersistenceLayer
                 connection.Close();
             }
         }
+
+        public void DeleteRating(int ratingId)
+        {
+            string sql = "DELETE FROM ratings " +
+                            "WHERE rating_id = @rating_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("rating_id", ratingId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }

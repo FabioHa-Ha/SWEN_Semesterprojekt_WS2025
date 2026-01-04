@@ -77,5 +77,14 @@ namespace Semesterprojekt.BusinessLayer
             }
             ratingRepository.ConfirmRating(rating.RatingId);
         }
+
+        public void DeleteRating(int userId, Rating rating)
+        {
+            if (userId != rating.Creator)
+            {
+                throw new InvalidAccessException("You only delete your own ratings!");
+            }
+            ratingRepository.DeleteRating(rating.RatingId);
+        }
     }
 }
