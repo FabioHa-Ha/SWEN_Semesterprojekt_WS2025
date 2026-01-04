@@ -56,23 +56,18 @@ namespace Semesterprojekt.BusinessLayer
             ratingRepository.LikeRating(userId, rating.RatingId);
         }
 
-        public void EditRating(User user, Rating rating, int newStarRating, string newComment)
+        public void UpdateRating(int userId, Rating rating, RatingDTO ratingDTO)
         {
-            if (rating.Creator == user.UserId)
+            if (userId != rating.Creator)
             {
-                rating.StarRating = newStarRating;
-                rating.Comment = newComment;
-                ratingRepository.UpdateRating(rating);
+                throw new InvalidAccessException("You only update your own ratings!");
             }
-            else
-            {
-                throw new InvalidUserException("Only the rating creator can edit a rating!");
-            }
+            ratingRepository.UpdateRating(rating.RatingId, ratingDTO);
         }
 
         public void ConfirmRating(Rating rating, User user)
         {
-            if (rating.Creator == user.UserId) 
+            /*if (rating.Creator == user.UserId) 
             { 
                 rating.ConfirmedByAuthor = true;
                 ratingRepository.UpdateRating(rating);
@@ -80,7 +75,7 @@ namespace Semesterprojekt.BusinessLayer
             else
             {
                 throw new InvalidUserException("Only the rating creator can confirm a rating!");
-            }
+            }*/
         }
     }
 }

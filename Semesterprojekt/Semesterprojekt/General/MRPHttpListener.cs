@@ -136,6 +136,11 @@ namespace Semesterprojekt.General
                                                 urlParts = url.Split("/");
                                                 mediaEntryController.UpdateMedia(authHeader, urlParts[3], requestBodyText);
                                                 break;
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                ratingController.UpdateRating(authHeader, urlParts[3], requestBodyText);
+                                                break;
                                         }
                                         break;
                                     case "DELETE":

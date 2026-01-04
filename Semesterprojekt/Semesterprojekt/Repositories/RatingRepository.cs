@@ -153,9 +153,26 @@ namespace Semesterprojekt.PersistenceLayer
             }
         }
 
-        public void UpdateRating(Rating rating)
+        public void UpdateRating(int ratingId, RatingDTO ratingDTO)
         {
-            // TODO
+            string sql = "UPDATE ratings " +
+                            "SET star_rating = @star_rating, rating_comment = @comment " +
+                            "WHERE rating_id = @rating_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("star_rating", ratingDTO.stars);
+                    command.Parameters.AddWithValue("comment", ratingDTO.comment);
+                    command.Parameters.AddWithValue("rating_id", ratingId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
         }
     }
 }

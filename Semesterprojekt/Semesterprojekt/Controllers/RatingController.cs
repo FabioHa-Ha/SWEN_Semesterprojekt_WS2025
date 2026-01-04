@@ -66,5 +66,27 @@ namespace Semesterprojekt.Controllers
             }
             ratingService.LikeRating(user.UserId, rating);
         }
+
+        public void UpdateRating(string token, string ratingIdString, string requestBody)
+        {
+            int ratingId = Int32.Parse(ratingIdString);
+            string username = HttpUtility.ValidateJwtToken(token);
+            if (username == "")
+            {
+                throw new InvalidCredentialException("Invalid Token!");
+            }
+            User user = userService.GetUserByUsername(username);
+            Rating? rating = ratingService.GetRating(ratingId);
+            if (rating == null)
+            {
+                throw new UnkownRatingException("Invalid id!");
+            }
+            RatingDTO ratingDTO = JsonSerializer.Deserialize<RatingDTO>(requestBody);
+            if (ratingDTO == null)
+            {
+                throw new InvalidRequestBodyException("Invalid Request!");
+            }
+            ratingService.UpdateRating(user.UserId, rating, ratingDTO);
+        }
     }
 }
