@@ -12,6 +12,8 @@ namespace Semesterprojekt.Entities
         private string _username;
         private string _password;
         private HashSet<int> _favoriteMediaEntries;
+        private string _email;
+        private int _favoriteGenre;
 
         public int UserId
         {
@@ -36,12 +38,26 @@ namespace Semesterprojekt.Entities
             get => _favoriteMediaEntries;
         }
 
-        public User(int userId, string username, string password)
+        public string Email
         {
-            _userId = userId;   // TODO: ID generieren lassen
+            get => _email;
+            set => _email = value;
+        }
+
+        public int FavoriteGenre
+        {
+            get => _favoriteGenre;
+            set => _favoriteGenre = value;
+        }
+
+        public User(int userId, string username = "", string password = "", string email = "", int favoriteGenre = -1)
+        {
+            _userId = userId;
             _username = username;
             _password = password;
             _favoriteMediaEntries = new HashSet<int>();
+            _email = email;
+            _favoriteGenre = favoriteGenre;
         }
     }
 }

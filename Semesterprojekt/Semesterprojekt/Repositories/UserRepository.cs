@@ -98,5 +98,38 @@ namespace Semesterprojekt.Repositories
                 throw new InvalidCredentialException("Incorrect Username or Password!");
             }
         }
+
+        public User? GetUserById(int id)
+        {
+            bool userFound = false;
+            User user = new User(id);
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT username, email, favorite_genre FROM users WHERE user_id = @user_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", id);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userFound = true;
+                            user.Username = reader.GetString(0);
+                            user.Email =  reader.IsDBNull(1) ? "" : reader.GetString(1);
+                            user.FavoriteGenre = reader.IsDBNull(2) ? -1 : reader.GetInt32(2);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            if (userFound)
+            {
+                return user;
+            }
+            return null;
+        }
     }
 }

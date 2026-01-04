@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.Services
 {
-    public class AuthService
+    public class UserService
     {
         UserRepository userRepository;
 
-        public AuthService(UserRepository userRepository)
+        public UserService(UserRepository userRepository)
         {
             this.userRepository = userRepository;
         }
@@ -36,6 +36,11 @@ namespace Semesterprojekt.Services
                 throw new InvalidCredentialException("Incorrect Username or Password!");
             }
             userRepository.ValidateUser(username, password);
+        }
+
+        public User? GetUserById(int id)
+        {
+            return userRepository.GetUserById(id);
         }
     }
 }

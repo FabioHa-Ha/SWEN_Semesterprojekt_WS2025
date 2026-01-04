@@ -9,6 +9,7 @@ using System.Net;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Semesterprojekt.General
@@ -57,28 +58,43 @@ namespace Semesterprojekt.General
                                 url = url.Substring(0, url.Length - 1);
                             }
 
+                            string? authHeader = request.Headers["Authorization"];
+                            if (authHeader != null && authHeader.StartsWith("Bearer "))
+                            {
+                                authHeader = authHeader.Substring(7);
+                            }
+
                             // Read Request Body
                             StreamReader bodyStream = new StreamReader(request.InputStream);
                             string requestBodyText = bodyStream.ReadToEnd();
 
                             bool requestHandled = false;
                             string responseString = "";
+                            // Regex: https://stackoverflow.com/questions/42707983/can-i-use-regex-expression-in-c-sharp-with-switch-case
                             try
                             {
                                 switch (request.HttpMethod)
                                 {
                                     case "GET":
+                                        switch (true)
+                                        {
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/profile").IsMatch(url):
+                                                requestHandled = true;
+                                                string[] urlParts = url.Split("/");
+                                                responseString = userController.GetProfile(authHeader, urlParts[3]);
+                                                break;
+                                        }
                                         break;
                                     case "POST":
-                                        switch (url)
+                                        switch (true)
                                         {
-                                            case "/api/users/login":
+                                            case bool _ when new Regex(@"^/api/users/login$").IsMatch(url):
                                                 requestHandled = true;
-                                                responseString = authController.Login(requestBodyText);
+                                                responseString = userController.Login(requestBodyText);
                                                 break;
-                                            case "/api/users/register":
+                                            case bool _ when new Regex(@"^/api/users/register").IsMatch(url):
                                                 requestHandled = true;
-                                                responseString = authController.Register(requestBodyText);
+                                                responseString = userController.Register(requestBodyText);
                                                 break;
                                         }
                                         break;

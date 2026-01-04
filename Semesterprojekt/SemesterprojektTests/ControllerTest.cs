@@ -26,10 +26,14 @@ namespace SemesterprojektTests
             DatabaseConnector databaseConnector = new DatabaseConnector();
 
             UserRepository userRepository = new UserRepository(databaseConnector);
+            GenreRepository genreRepository = new GenreRepository(databaseConnector);
 
             UserService userService = new UserService(userRepository);
+            GenreService genreService = new GenreService(genreRepository);
 
-            userController = new UserController(userService);
+            UserController userController = new UserController(userService, genreService);
+
+            userController = new UserController(userService, genreService);
         }
 
         [TestMethod]

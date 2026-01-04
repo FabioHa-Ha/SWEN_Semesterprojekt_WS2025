@@ -22,9 +22,9 @@ namespace Semesterprojekt.Entities
             set => _name = value;
         }
 
-        public Genre(int genreId, string name)
+        public Genre(int genreId, string name = "")
         {
-            _genreId = genreId;   // TODO: ID generieren lassen
+            _genreId = genreId;
             _name = name;
         }
     }
