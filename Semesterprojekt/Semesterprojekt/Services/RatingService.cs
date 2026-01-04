@@ -19,6 +19,11 @@ namespace Semesterprojekt.BusinessLayer
             this.ratingRepository = ratingRepository;
         }
 
+        public Rating? GetRating(int id)
+        {
+            return ratingRepository.GetRating(id);
+        }
+
         public void CreateRating(MediaEntry mediaEntry, int userId, RatingDTO ratingDTO)
         {
             Rating? rating = ratingRepository.GetRating(userId, mediaEntry.MediaEntryId);
@@ -37,17 +42,18 @@ namespace Semesterprojekt.BusinessLayer
             ratingRepository.CreateRating(mediaEntry.MediaEntryId, userId, ratingDTO);
         }
 
-        public void LikeRating(User user, Rating rating)
+        public void LikeRating(int userId, Rating rating)
         {
-            if (rating.Creator != user.UserId)
+            if(userId == rating.Creator)
             {
-                rating.LikedBy.Add(user.UserId);    // TODO: What happens when a user already liked a rating?
-                ratingRepository.UpdateRating(rating);
+                throw new InvalidAccessException("You cannot like on your own rating!");
             }
-            else
+            bool likeExists = ratingRepository.IsRatingLiked(userId, rating.RatingId);
+            if (likeExists)
             {
-                throw new InvalidUserException("You can only like other peoples ratings!");
+                throw new InvalidAccessException("You already liked this rating!");
             }
+            ratingRepository.LikeRating(userId, rating.RatingId);
         }
 
         public void EditRating(User user, Rating rating, int newStarRating, string newComment)

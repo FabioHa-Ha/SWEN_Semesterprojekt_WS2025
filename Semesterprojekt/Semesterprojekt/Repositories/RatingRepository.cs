@@ -15,6 +15,39 @@ namespace Semesterprojekt.PersistenceLayer
             this.databaseConnector = databaseConnector;
         }
 
+        public Rating? GetRating(int ratingId)
+        {
+            Rating? rating = null;
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT of_media_entry, creator, star_rating, rating_comment, created_at, confirmed_by_author " +
+                                    "FROM ratings " +
+                                    "WHERE rating_id = @rating_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("rating_id", ratingId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            rating = new Rating(ratingId);
+                            rating.OfMediaEntry = reader.GetInt32(0);
+                            rating.Creator = reader.GetInt32(1);
+                            rating.StarRating = reader.IsDBNull(2) ? -1 : reader.GetInt32(2);
+                            rating.Comment = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                            rating.CreatedAt = reader.IsDBNull(4) ? null : reader.GetDateTime(4);
+                            rating.ConfirmedByAuthor = reader.GetBoolean(5);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return rating;
+        }
+
         public Rating? GetRating(int userId, int mediaRatingId)
         {
             Rating? rating = null;
@@ -70,6 +103,54 @@ namespace Semesterprojekt.PersistenceLayer
                 connection.Close();
             }
             return newId;
+        }
+
+        public bool IsRatingLiked(int userId, int ratingId)
+        {
+            bool found = false;
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT rating_id " +
+                                    "FROM rating_likes " +
+                                    "WHERE rating_id = @rating_id AND user_id = @user_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("rating_id", ratingId);
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            found = true;
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return found;
+        }
+
+        public void LikeRating(int userId, int ratingId)
+        {
+            string sql = "INSERT INTO rating_likes (user_id, rating_id) " +
+                            "VALUES (@user_id, @rating_id)";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    command.Parameters.AddWithValue("rating_id", ratingId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
         }
 
         public void UpdateRating(Rating rating)

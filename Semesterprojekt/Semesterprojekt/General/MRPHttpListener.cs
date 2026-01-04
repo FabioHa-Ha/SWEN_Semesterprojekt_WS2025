@@ -116,6 +116,11 @@ namespace Semesterprojekt.General
                                                 requestHandled = true;
                                                 mediaEntryController.CreateMedia(authHeader, requestBodyText);
                                                 break;
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*/like").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                ratingController.LikeRating(authHeader, urlParts[3]);
+                                                break;
                                         }
                                         break;
                                     case "PUT":

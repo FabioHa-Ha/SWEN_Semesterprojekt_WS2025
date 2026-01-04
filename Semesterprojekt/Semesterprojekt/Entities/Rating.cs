@@ -26,11 +26,13 @@ namespace Semesterprojekt.Entities
         public int Creator
         {
             get => _creator;
+            set => _creator = value;
         }
 
         public int OfMediaEntry
         {
             get => _ofMediaEntry;
+            set => _ofMediaEntry = value;
         }
 
         public int StarRating

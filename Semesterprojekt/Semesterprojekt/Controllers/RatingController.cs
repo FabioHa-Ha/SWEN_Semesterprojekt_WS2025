@@ -3,6 +3,7 @@ using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
 using Semesterprojekt.General;
+using Semesterprojekt.PersistenceLayer;
 using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,23 @@ namespace Semesterprojekt.Controllers
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
             ratingService.CreateRating(mediaEntry, user.UserId, ratingDTO);
+        }
+
+        public void LikeRating(string token, string ratingIdString)
+        {
+            int ratingId = Int32.Parse(ratingIdString);
+            string username = HttpUtility.ValidateJwtToken(token);
+            if (username == "")
+            {
+                throw new InvalidCredentialException("Invalid Token!");
+            }
+            User user = userService.GetUserByUsername(username);
+            Rating? rating = ratingService.GetRating(ratingId);
+            if (rating == null)
+            {
+                throw new UnkownRatingException("Invalid id!");
+            }
+            ratingService.LikeRating(user.UserId, rating);
         }
     }
 }
