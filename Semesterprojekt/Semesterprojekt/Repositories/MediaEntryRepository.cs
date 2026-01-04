@@ -174,5 +174,50 @@ namespace Semesterprojekt.Repositories
                 connection.Close();
             }
         }
+
+        public void UpdateMediaEnty(int mediaEntryId, MediaEntryDTO mediaEntryDTO)
+        {
+            string sql = "UPDATE media_entries " +
+                            "SET title = @title, description = @description, media_type = @media_type, " +
+                            "release_year = @release_year, age_restriction = @age_restriction " +
+                            "WHERE media_entry_id = @media_entry_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("title", mediaEntryDTO.title);
+                    command.Parameters.AddWithValue("description", mediaEntryDTO.description);
+                    command.Parameters.AddWithValue("media_type", mediaEntryDTO.mediaType);
+                    command.Parameters.AddWithValue("release_year", mediaEntryDTO.releaseYear);
+                    command.Parameters.AddWithValue("age_restriction", mediaEntryDTO.ageRestriction);
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
+
+        public void RemoveGenresFromMediaEntry(int mediaEntryId)
+        {
+            string sql = "DELETE FROM media_entries_genres " +
+                            "WHERE media_entry_id = @media_entry_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }
