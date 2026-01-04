@@ -129,8 +129,6 @@ namespace Semesterprojekt.Repositories
                     command.Parameters.AddWithValue("age_restriction", mediaEntryDTO.ageRestriction);
                     command.Parameters.AddWithValue("creator", userId);
 
-                    command.ExecuteNonQuery();
-
                     newId = (int)command.ExecuteScalar();
                 }
                 connection.Close();
