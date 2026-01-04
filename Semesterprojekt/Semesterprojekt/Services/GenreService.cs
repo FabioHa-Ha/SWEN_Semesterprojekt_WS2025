@@ -32,5 +32,10 @@ namespace Semesterprojekt.Services
             }
             return genre;
         }
+
+        public string[] GetGenresOfMediaEntry(int mediaEntyId)
+        {
+            return genreRepository.GetGenresOfMediaEntry(mediaEntyId);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Semesterprojekt.Repositories
 {
@@ -96,6 +97,37 @@ namespace Semesterprojekt.Repositories
                 }
                 connection.Close();
             }
+        }
+
+        public string[] GetGenresOfMediaEntry(int mediaEntryId)
+        {
+            List<string> genres = new List<string>();
+            List<int> genreIds = new List<int>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT genre_id FROM media_entries_genres WHERE media_entry_id = @media_entry_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            genreIds.Add(reader.GetInt32(0));
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            foreach(int genreId in genreIds) 
+            {
+                Genre genre = GetGenreById(genreId);
+                genres.Add(genre.Name);
+            }
+            return genres.ToArray();
         }
     }
 }

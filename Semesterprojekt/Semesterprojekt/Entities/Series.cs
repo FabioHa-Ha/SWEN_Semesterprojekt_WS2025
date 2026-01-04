@@ -8,8 +8,8 @@ namespace Semesterprojekt.Entities
 {
     public class Series : MediaEntry
     {
-        public Series(int mediaEntryId, string title, string description, int releaseYear, 
-            int ageRestriction, int creator) : base(mediaEntryId, title, description, 
+        public Series(int mediaEntryId, string title = "", string description = "", int releaseYear = -1, 
+            int ageRestriction = -1, int creator = -1) : base(mediaEntryId, title, description, 
                 releaseYear, ageRestriction, creator)
         {
         }

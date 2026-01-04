@@ -13,13 +13,12 @@ CREATE TABLE users (
 );
 
 CREATE TABLE media_types (
-	media_type_id	INT PRIMARY KEY,
-	name			VARCHAR(50) NOT NULL
+	media_type_name		VARCHAR(50) PRIMARY KEY
 );
 
 CREATE TABLE media_entries (
 	media_entry_id 		INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	media_type			INT NOT NULL REFERENCES media_types(media_type_id) ON DELETE CASCADE,
+	media_type			VARCHAR(50) NOT NULL REFERENCES media_types(media_type_name) ON DELETE CASCADE,
 	title				VARCHAR(50),
 	description			VARCHAR(500),
 	release_year		INT,
@@ -55,9 +54,9 @@ CREATE TABLE rating_likes (
 	PRIMARY KEY (rating_id, user_id)
 );
 
-INSERT INTO media_types (media_type_id, name) VALUES (1, 'Movie');
-INSERT INTO media_types (media_type_id, name) VALUES (2, 'Series');
-INSERT INTO media_types (media_type_id, name) VALUES (3, 'Game');
+INSERT INTO media_types (media_type_name) VALUES ('Movie');
+INSERT INTO media_types (media_type_name) VALUES ('Series');
+INSERT INTO media_types (media_type_name) VALUES ('Game');
 
 INSERT INTO users (username, password, salt_string) VALUES ('user1', '9EwhQcJ3iMB50R0e3lrr8vx5RLZ0tQT0lIEFcYIZna0=', '03ZSRGFD4HKAJ97J5TC0'); -- 1234
 INSERT INTO users (username, password, salt_string) VALUES ('user2', 'v+5FHWd2CwZm9EKwJwk0PhD9/ccP7zqTrIzMwF7O+m4=', '2702MVI4NNRKKL2OR72Q'); -- abcd
@@ -71,22 +70,22 @@ INSERT INTO genres (name) VALUES ('FPS');
 INSERT INTO genres (name) VALUES ('Open World');
 
 INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) 
-	VALUES (1, 'Dune', 'A visually ambitious, slow‐burn adaptation that follows Paul Atreidess fall from aristocratic heir to desert exile and messianic figure, set against a backdrop of interstellar politics, resource warfare and ecological struggle on the spice‐rich planet Arrakis.',
+	VALUES ('Movie', 'Dune', 'A visually ambitious, slow‐burn adaptation that follows Paul Atreidess fall from aristocratic heir to desert exile and messianic figure, set against a backdrop of interstellar politics, resource warfare and ecological struggle on the spice‐rich planet Arrakis.',
 		2021, 13, 1);
 INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) 
-	VALUES (1, 'Iron Man', 'Iron Man is one of many Marvel heroes with a genius-level intellect, but his focus on societal application alongside hard science distinguishes him from other heroes. The character is a futurist, and he works to identify solutions for problems that have yet to emerge.', 
+	VALUES ('Movie', 'Iron Man', 'Iron Man is one of many Marvel heroes with a genius-level intellect, but his focus on societal application alongside hard science distinguishes him from other heroes. The character is a futurist, and he works to identify solutions for problems that have yet to emerge.', 
 		2008, 13, 3);
 INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) 
-	VALUES (2, 'Gravity Falls', 'The series follows the adventures of Dipper Pines and his twin sister Mabel, who are sent to spend the summer with their great-uncle (or "Grunkle") Stan in Gravity Falls, Oregon, a mysterious town rife with paranormal incidents and supernatural creatures.',
+	VALUES ('Series', 'Gravity Falls', 'The series follows the adventures of Dipper Pines and his twin sister Mabel, who are sent to spend the summer with their great-uncle (or "Grunkle") Stan in Gravity Falls, Oregon, a mysterious town rife with paranormal incidents and supernatural creatures.',
 		2012, 8, 2);
 INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) 
-	VALUES (2, 'Percy Jackson and the Olympians', 'Percy Jackson and the Olympians follows Percy, a troubled tween with unexplainable powers. In each installment, Percy finds himself face-to-face with formidable new foes as he comes into his own, amassing loyal allies and burgeoning new abilities throughout his journey.', 
+	VALUES ('Series', 'Percy Jackson and the Olympians', 'Percy Jackson and the Olympians follows Percy, a troubled tween with unexplainable powers. In each installment, Percy finds himself face-to-face with formidable new foes as he comes into his own, amassing loyal allies and burgeoning new abilities throughout his journey.', 
 		2023, 9, 2);
 INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) 
-	VALUES (3, 'Overwatch', 'Described as a "hero shooter", Overwatch assigned players into two teams of six, with each player selecting from a large roster of characters, known as "heroes", with unique abilities. Teams worked to complete map-specific objectives within a limited period of time.', 
+	VALUES ('Game', 'Overwatch', 'Described as a "hero shooter", Overwatch assigned players into two teams of six, with each player selecting from a large roster of characters, known as "heroes", with unique abilities. Teams worked to complete map-specific objectives within a limited period of time.', 
 		2016, 13, 1);
 INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) 
-	VALUES (3, 'Minecraft', 'Minecraft is a 3D sandbox video game that has no required goals to accomplish, allowing players a large amount of freedom in choosing how to play the game.', 
+	VALUES ('Game', 'Minecraft', 'Minecraft is a 3D sandbox video game that has no required goals to accomplish, allowing players a large amount of freedom in choosing how to play the game.', 
 		2011, 10, 2);
 
 INSERT INTO media_entries_genres (media_entry_id, genre_id) VALUES (1, 1);

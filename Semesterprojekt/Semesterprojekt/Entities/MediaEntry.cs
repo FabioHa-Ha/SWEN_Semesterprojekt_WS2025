@@ -44,6 +44,7 @@ namespace Semesterprojekt.Entities
         public int Creator
         {
             get => _creator;
+            set => _creator = value;
         }
 
         public double AverageScore
@@ -55,10 +56,10 @@ namespace Semesterprojekt.Entities
         }
 
 
-        public MediaEntry(int mediaEntryId, string title, string description, int releaseYear,
-            int ageRestriction, int creator)
+        public MediaEntry(int mediaEntryId, string title = "", string description = "", int releaseYear = -1,
+            int ageRestriction = -1, int creator = -1)
         {
-            _mediaEntryId = mediaEntryId;   // TODO: ID generieren lassen
+            _mediaEntryId = mediaEntryId;
             _title = title;
             _description = description;
             _releaseYear = releaseYear;

@@ -30,7 +30,7 @@ namespace Semesterprojekt.General
             return JsonSerializer.Serialize(errorDTO);
         }
 
-        public static async Task RunHttpListener(UserController userController)
+        public static async Task RunHttpListener(UserController userController, MediaEntryController mediaEntryController)
         {
             var listener = new HttpListener();
 
@@ -70,6 +70,7 @@ namespace Semesterprojekt.General
 
                             bool requestHandled = false;
                             string responseString = "";
+                            string[] urlParts;
                             // Regex: https://stackoverflow.com/questions/42707983/can-i-use-regex-expression-in-c-sharp-with-switch-case
                             try
                             {
@@ -80,8 +81,13 @@ namespace Semesterprojekt.General
                                         {
                                             case bool _ when new Regex(@"^/api/users/[0-9]*/profile").IsMatch(url):
                                                 requestHandled = true;
-                                                string[] urlParts = url.Split("/");
+                                                urlParts = url.Split("/");
                                                 responseString = userController.GetProfile(authHeader, urlParts[3]);
+                                                break;
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                responseString = mediaEntryController.GetMediaEntry(urlParts[3]);
                                                 break;
                                         }
                                         break;
@@ -103,7 +109,7 @@ namespace Semesterprojekt.General
                                         {
                                             case bool _ when new Regex(@"^/api/users/[0-9]*/profile").IsMatch(url):
                                                 requestHandled = true;
-                                                string[] urlParts = url.Split("/");
+                                                urlParts = url.Split("/");
                                                 userController.UpdateProfile(authHeader, urlParts[3], requestBodyText);
                                                 break;
                                         }
@@ -112,7 +118,8 @@ namespace Semesterprojekt.General
                                         break;
                                 }
                             }
-                            catch (Exception e) when (e is InvalidRequestBodyException || e is UserAlreadyExistsException)
+                            catch (Exception e) when (e is InvalidRequestBodyException || 
+                                e is UserAlreadyExistsException || e is UnkownMediaEntryException)
                             {
                                 response.StatusCode = 400;
                                 responseString = ErrorResponse(request, response, e);

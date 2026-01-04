@@ -31,8 +31,6 @@ namespace SemesterprojektTests
             GenreService genreService = new GenreService(genreRepository);
             UserService userService = new UserService(userRepository, genreService);
 
-            UserController userController = new UserController(userService, genreService);
-
             userController = new UserController(userService, genreService);
         }
 

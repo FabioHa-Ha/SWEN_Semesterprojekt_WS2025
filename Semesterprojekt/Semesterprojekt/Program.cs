@@ -13,13 +13,16 @@ namespace Semesterprojekt
 
             UserRepository userRepository = new UserRepository(databaseConnector);
             GenreRepository genreRepository = new GenreRepository(databaseConnector);
+            MediaEntryRepository mediaEntryRepository = new MediaEntryRepository(databaseConnector);
 
             GenreService genreService = new GenreService(genreRepository);
             UserService userService = new UserService(userRepository, genreService);
+            MediaEntryService mediaEntryService = new MediaEntryService(mediaEntryRepository);
 
             UserController userController = new UserController(userService, genreService);
+            MediaEntryController mediaEntryController = new MediaEntryController(mediaEntryService, genreService);
 
-            await MRPHttpListener.RunHttpListener(userController);
+            await MRPHttpListener.RunHttpListener(userController, mediaEntryController);
         }
     }
 }
