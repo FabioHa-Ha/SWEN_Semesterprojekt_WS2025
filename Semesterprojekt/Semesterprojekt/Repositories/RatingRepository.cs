@@ -174,5 +174,25 @@ namespace Semesterprojekt.PersistenceLayer
                 connection.Close();
             }
         }
+
+        public void ConfirmRating(int ratingId)
+        {
+            string sql = "UPDATE ratings " +
+                            "SET confirmed_by_author = true " +
+                            "WHERE rating_id = @rating_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("rating_id", ratingId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }

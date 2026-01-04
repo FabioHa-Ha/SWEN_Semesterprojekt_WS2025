@@ -121,6 +121,11 @@ namespace Semesterprojekt.General
                                                 urlParts = url.Split("/");
                                                 ratingController.LikeRating(authHeader, urlParts[3]);
                                                 break;
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*/confirm").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                ratingController.ConfirmRating(authHeader, urlParts[3]);
+                                                break;
                                         }
                                         break;
                                     case "PUT":

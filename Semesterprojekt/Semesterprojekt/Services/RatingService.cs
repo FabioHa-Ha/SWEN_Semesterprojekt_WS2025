@@ -65,17 +65,17 @@ namespace Semesterprojekt.BusinessLayer
             ratingRepository.UpdateRating(rating.RatingId, ratingDTO);
         }
 
-        public void ConfirmRating(Rating rating, User user)
+        public void ConfirmRating(int userId, Rating rating)
         {
-            /*if (rating.Creator == user.UserId) 
-            { 
-                rating.ConfirmedByAuthor = true;
-                ratingRepository.UpdateRating(rating);
-            }
-            else
+            if (userId != rating.Creator)
             {
-                throw new InvalidUserException("Only the rating creator can confirm a rating!");
-            }*/
+                throw new InvalidAccessException("You only confrim your own ratings!");
+            }
+            if (rating.ConfirmedByAuthor)
+            {
+                throw new InvalidAccessException("You already confrimed this ratings!");
+            }
+            ratingRepository.ConfirmRating(rating.RatingId);
         }
     }
 }
