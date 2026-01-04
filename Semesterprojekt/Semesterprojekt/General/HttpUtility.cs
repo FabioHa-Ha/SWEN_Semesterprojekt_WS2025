@@ -75,5 +75,37 @@ namespace Semesterprojekt.General
                 return false;
             }
         }
+
+        public static string ValidateJwtToken(string token)
+        {
+            try
+            {
+                string secretKeyFilePath = "jwtSecretKey.txt";
+                string secretKey = File.ReadAllText(secretKeyFilePath);
+                var key = Encoding.ASCII.GetBytes(secretKey);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+                ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+                string usernameClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+                if (usernameClaim != null)
+                {
+                    return usernameClaim;
+                }
+                return "";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Token validation failed: " + ex.Message);
+                return "";
+            }
+        }
     }
 }

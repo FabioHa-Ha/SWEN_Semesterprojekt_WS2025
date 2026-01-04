@@ -134,6 +134,34 @@ namespace Semesterprojekt.Repositories
             return null;
         }
 
+        public User? GetUserByUsername(string username)
+        {
+            User user = null;
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT user_id, email, favorite_genre FROM users WHERE username = @username";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("username", username);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            user = new User(reader.GetInt32(0));
+                            user.Username = username;
+                            user.Email = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                            user.FavoriteGenre = reader.IsDBNull(2) ? -1 : reader.GetInt32(2);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return user;
+        }
+
         public void UpdateProfile(int userId, string email, int genreId)
         {
             string sql = "UPDATE users SET email = @email, favorite_genre = @favorite_genre WHERE user_id = @user_id";

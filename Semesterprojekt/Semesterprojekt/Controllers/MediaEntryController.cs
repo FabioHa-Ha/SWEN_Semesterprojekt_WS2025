@@ -1,6 +1,7 @@
 ﻿using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
+using Semesterprojekt.General;
 using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace Semesterprojekt.Controllers
     {
         MediaEntryService mediaEntryService;
         GenreService genreService;
+        UserService userService;
 
-        public MediaEntryController(MediaEntryService mediaEntryService, GenreService genreService)
+        public MediaEntryController(MediaEntryService mediaEntryService, GenreService genreService, UserService userService)
         {
             this.mediaEntryService = mediaEntryService;
             this.genreService = genreService;
+            this.userService = userService;
         }
 
         private string GetMediaType(MediaEntry mediaEntry)
@@ -71,6 +74,18 @@ namespace Semesterprojekt.Controllers
             }
             MediaEntiresDTO mediaEntiresDTO = new MediaEntiresDTO(mediaEntryDTOs.ToArray());
             return JsonSerializer.Serialize(mediaEntiresDTO);
+        }
+
+        public void CreateMedia(string token, string requestBody)
+        {
+            MediaEntryDTO mediaEntryDTO = JsonSerializer.Deserialize<MediaEntryDTO>(requestBody);
+            if (mediaEntryDTO == null)
+            {
+                throw new InvalidRequestBodyException("Invalid Request!");
+            }
+            string username = HttpUtility.ValidateJwtToken(token);
+            User user = userService.GetUserByUsername(username);
+            mediaEntryService.CreateMediaEntry(mediaEntryDTO, user.UserId);
         }
     }
 }

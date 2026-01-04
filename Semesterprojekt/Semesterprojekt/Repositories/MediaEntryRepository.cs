@@ -1,5 +1,7 @@
 ﻿using Npgsql;
+using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
+using Semesterprojekt.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,6 +107,55 @@ namespace Semesterprojekt.Repositories
                 connection.Close();
             }
             return mediaEntries;
+        }
+
+        public int CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
+        {
+            int newId;
+            string sql = "INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) " +
+                "VALUES (@media_type, @title, @description, @release_year, @age_restriction, @creator) " +
+                "RETURNING media_entry_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("media_type", mediaEntryDTO.mediaType);
+                    command.Parameters.AddWithValue("title", mediaEntryDTO.title);
+                    command.Parameters.AddWithValue("description", mediaEntryDTO.description);
+                    command.Parameters.AddWithValue("release_year", mediaEntryDTO.releaseYear);
+                    command.Parameters.AddWithValue("age_restriction", mediaEntryDTO.ageRestriction);
+                    command.Parameters.AddWithValue("creator", userId);
+
+                    command.ExecuteNonQuery();
+
+                    newId = (int)command.ExecuteScalar();
+                }
+                connection.Close();
+            }
+            return newId;
+        }
+
+        public void AssignGenreToMediaEntry(int genreId, int mediaEntryId)
+        {
+            string sql = "INSERT INTO media_entries_genres (media_entry_id, genre_id) " +
+                            "VALUES (@media_entry_id, @genre_id) ";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+                    command.Parameters.AddWithValue("genre_id", genreId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
         }
     }
 }

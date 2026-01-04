@@ -17,10 +17,10 @@ namespace Semesterprojekt
 
             GenreService genreService = new GenreService(genreRepository);
             UserService userService = new UserService(userRepository, genreService);
-            MediaEntryService mediaEntryService = new MediaEntryService(mediaEntryRepository);
+            MediaEntryService mediaEntryService = new MediaEntryService(mediaEntryRepository, genreService);
 
             UserController userController = new UserController(userService, genreService);
-            MediaEntryController mediaEntryController = new MediaEntryController(mediaEntryService, genreService);
+            MediaEntryController mediaEntryController = new MediaEntryController(mediaEntryService, genreService, userService);
 
             await MRPHttpListener.RunHttpListener(userController, mediaEntryController);
         }

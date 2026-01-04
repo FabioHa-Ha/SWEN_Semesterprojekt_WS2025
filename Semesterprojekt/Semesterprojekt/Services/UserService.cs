@@ -61,6 +61,11 @@ namespace Semesterprojekt.Services
             return userRepository.GetUserById(id);
         }
 
+        public User? GetUserByUsername(string username)
+        {
+            return userRepository.GetUserByUsername(username);
+        }
+
         public void UpdateProfile(User user, ProfileDTO profileDTO)
         {
             Genre genre = genreService.GetOrCreateGenre(profileDTO.favoriteGenre);

@@ -106,6 +106,10 @@ namespace Semesterprojekt.General
                                                 requestHandled = true;
                                                 responseString = userController.Register(requestBodyText);
                                                 break;
+                                            case bool _ when new Regex(@"^/api/media").IsMatch(url):
+                                                requestHandled = true;
+                                                mediaEntryController.CreateMedia(authHeader, requestBodyText);
+                                                break;
                                         }
                                         break;
                                     case "PUT":
