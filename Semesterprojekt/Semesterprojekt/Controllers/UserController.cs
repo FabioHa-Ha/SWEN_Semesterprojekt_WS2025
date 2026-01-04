@@ -52,15 +52,7 @@ namespace Semesterprojekt.Controllers
         public string GetProfile(string token, string userIdString)
         {
             int userId = Int32.Parse(userIdString);
-            User? user = userService.GetUserById(userId);
-            if(user == null)
-            {
-                throw new InvalidUserException("Unkonw Id!");
-            }
-            if(!HttpUtility.ValidateJwtToken(token, user.Username))
-            {
-                throw new AuthenticationException("Invalid Token!");
-            }
+            User user = userService.GetValidUser(token, userId);
             Genre? genre = genreService.GetGenreById(user.FavoriteGenre);
             string genreName = "";
             if (genre != null)
@@ -69,6 +61,14 @@ namespace Semesterprojekt.Controllers
             }
             ProfileDTO profileDTO = new ProfileDTO(user.Email, genreName);
             return JsonSerializer.Serialize(profileDTO);
+        }
+
+        public void UpdateProfile(string token, string userIdString, string requestBody)
+        {
+            int userId = Int32.Parse(userIdString);
+            User user = userService.GetValidUser(token, userId);
+            ProfileDTO profileDTO = JsonSerializer.Deserialize<ProfileDTO>(requestBody);
+            userService.UpdateProfile(user, profileDTO);
         }
     }
 }

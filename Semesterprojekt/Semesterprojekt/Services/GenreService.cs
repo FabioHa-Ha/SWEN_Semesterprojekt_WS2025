@@ -21,5 +21,16 @@ namespace Semesterprojekt.Services
         {
             return genreRepository.GetGenreById(id);
         }
+
+        public Genre GetOrCreateGenre(string name)
+        {
+            Genre? genre = genreRepository.GetGenreByName(name);
+            if (genre == null)
+            {
+                genreRepository.CreateGenre(name);
+                genre = genreRepository.GetGenreByName(name);
+            }
+            return genre;
+        }
     }
 }

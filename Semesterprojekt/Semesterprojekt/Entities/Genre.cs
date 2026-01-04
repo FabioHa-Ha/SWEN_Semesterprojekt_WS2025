@@ -14,6 +14,7 @@ namespace Semesterprojekt.Entities
         public int GenreId
         {
             get => _genreId;
+            set => _genreId = value;
         }
 
         public string Name

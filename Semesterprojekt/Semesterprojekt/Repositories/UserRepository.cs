@@ -3,11 +3,13 @@ using Semesterprojekt.Entities;
 using Semesterprojekt.General;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Semesterprojekt.Repositories
 {
@@ -130,6 +132,26 @@ namespace Semesterprojekt.Repositories
                 return user;
             }
             return null;
+        }
+
+        public void UpdateProfile(int userId, string email, int genreId)
+        {
+            string sql = "UPDATE users SET email = @email, favorite_genre = @favorite_genre WHERE user_id = @user_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("email", email);
+                    command.Parameters.AddWithValue("favorite_genre", genreId);
+                    command.Parameters.AddWithValue("user_id", userId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
         }
     }
 }

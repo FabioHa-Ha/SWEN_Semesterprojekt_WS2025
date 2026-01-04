@@ -99,6 +99,14 @@ namespace Semesterprojekt.General
                                         }
                                         break;
                                     case "PUT":
+                                        switch (true)
+                                        {
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/profile").IsMatch(url):
+                                                requestHandled = true;
+                                                string[] urlParts = url.Split("/");
+                                                userController.UpdateProfile(authHeader, urlParts[3], requestBodyText);
+                                                break;
+                                        }
                                         break;
                                     case "DELETE":
                                         break;
