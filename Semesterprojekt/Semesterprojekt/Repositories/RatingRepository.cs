@@ -48,7 +48,7 @@ namespace Semesterprojekt.PersistenceLayer
             return rating;
         }
 
-        public Rating? GetRating(int userId, int mediaRatingId)
+        public Rating? GetRating(int userId, int mediaEntryId)
         {
             Rating? rating = null;
             NpgsqlConnection connection = databaseConnector.getConnection();
@@ -61,7 +61,7 @@ namespace Semesterprojekt.PersistenceLayer
 
                 using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("media_entry_id", mediaRatingId);
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
                     command.Parameters.AddWithValue("user_id", userId);
                     using (NpgsqlDataReader reader = command.ExecuteReader())
                     {
@@ -212,6 +212,39 @@ namespace Semesterprojekt.PersistenceLayer
                 }
                 connection.Close();
             }
+        }
+
+        public List<Rating> GetRatingsOfMediaEntry(int mediaEntryId)
+        {
+            List<Rating> ratings = new List<Rating>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT rating_id, star_rating, rating_comment, created_at, confirmed_by_author, creator " +
+                                    "FROM ratings " +
+                                    "WHERE of_media_entry = @media_entry_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Rating rating = new Rating(reader.GetInt32(0));
+                            rating.StarRating = reader.IsDBNull(1) ? -1 : reader.GetInt32(1);
+                            rating.Comment = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                            rating.CreatedAt = reader.IsDBNull(3) ? null : reader.GetDateTime(3);
+                            rating.ConfirmedByAuthor = reader.GetBoolean(4);
+                            rating.Creator = reader.GetInt32(5);
+                            ratings.Add(rating);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return ratings;
         }
     }
 }

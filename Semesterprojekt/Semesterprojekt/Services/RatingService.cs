@@ -2,6 +2,7 @@
 using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
 using Semesterprojekt.PersistenceLayer;
+using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,12 @@ namespace Semesterprojekt.BusinessLayer
     public class RatingService
     {
         RatingRepository ratingRepository;
+        UserService userService;
 
-        public RatingService(RatingRepository ratingRepository)
+        public RatingService(RatingRepository ratingRepository, UserService userService)
         {
             this.ratingRepository = ratingRepository;
+            this.userService = userService;
         }
 
         public Rating? GetRating(int id)
@@ -85,6 +88,22 @@ namespace Semesterprojekt.BusinessLayer
                 throw new InvalidAccessException("You only delete your own ratings!");
             }
             ratingRepository.DeleteRating(rating.RatingId);
+        }
+
+        public List<RatingViewDTO> GetRatingViewsOfMediaEntry(int userId, int mediaEntryId)
+        {
+            List<RatingViewDTO> ratingViews = new List<RatingViewDTO>();
+            List<Rating> ratings = ratingRepository.GetRatingsOfMediaEntry(mediaEntryId);
+            foreach(Rating rating in ratings)
+            {
+                if(rating.ConfirmedByAuthor)
+                {
+                    User creator = userService.GetUserById(rating.Creator);
+                    ratingViews.Add(new RatingViewDTO(rating.Comment, rating.StarRating,
+                        creator.Username, (DateTime)rating.CreatedAt));
+                }
+            }
+            return ratingViews;
         }
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.DTOs
 {
-    public class MediaEntiresDTO
+    public class MediaEntriesDTO
     {
-        public MediaEntiresDTO(MediaEntryDTO[] mediaEntries) 
+        public MediaEntriesDTO(MediaEntryDTO[] mediaEntries) 
         {
             this.media = mediaEntries;
         }

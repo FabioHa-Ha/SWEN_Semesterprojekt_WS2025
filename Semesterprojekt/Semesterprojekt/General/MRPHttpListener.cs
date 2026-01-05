@@ -88,11 +88,11 @@ namespace Semesterprojekt.General
                                             case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
-                                                responseString = mediaEntryController.GetMediaEntry(urlParts[3]);
+                                                responseString = mediaEntryController.GetMediaEntry(authHeader, urlParts[3]);
                                                 break;
                                             case bool _ when new Regex(@"^/api/media").IsMatch(url):
                                                 requestHandled = true;
-                                                responseString = mediaEntryController.GetAllMediaEntries();
+                                                responseString = mediaEntryController.GetAllMediaEntries(authHeader);
                                                 break;
                                         }
                                         break;

@@ -1,4 +1,5 @@
-﻿using Semesterprojekt.DTOs;
+﻿using Semesterprojekt.BusinessLayer;
+using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
 using Semesterprojekt.Repositories;
@@ -14,11 +15,14 @@ namespace Semesterprojekt.Services
     {
         MediaEntryRepository mediaEntryRepository;
         GenreService genreService;
+        RatingService ratingService;
 
-        public MediaEntryService(MediaEntryRepository mediaEntryRepository, GenreService genreService) 
+        public MediaEntryService(MediaEntryRepository mediaEntryRepository, GenreService genreService,
+            RatingService ratingService) 
         {
             this.mediaEntryRepository = mediaEntryRepository;
             this.genreService = genreService;
+            this.ratingService = ratingService;
         }
 
         public MediaEntry? GetMediaEntry(int id)
@@ -29,6 +33,34 @@ namespace Semesterprojekt.Services
         public List<MediaEntry> GetAllMediaEntries()
         {
             return mediaEntryRepository.GetAllMediaEntries();
+        }
+
+        private string GetMediaType(MediaEntry mediaEntry)
+        {
+            string mediaType = "";
+            if (mediaEntry is Movie)
+            {
+                mediaType = "Movie";
+            }
+            else if (mediaEntry is Series)
+            {
+                mediaType = "Series";
+            }
+            else if (mediaEntry is Game)
+            {
+                mediaType = "Game";
+            }
+            return mediaType;
+        }
+
+        public MediaEntryDTO GetMediaEntryView(int userId, MediaEntry mediaEntry)
+        {
+            string[] genres = genreService.GetGenresOfMediaEntry(mediaEntry.MediaEntryId);
+            string mediaType = GetMediaType(mediaEntry);
+            double averageScore = GetAverageScore(mediaEntry.MediaEntryId);
+            List<RatingViewDTO> ratings = ratingService.GetRatingViewsOfMediaEntry(userId, mediaEntry.MediaEntryId);
+            return new MediaEntryDTO(mediaEntry.Title, mediaEntry.Description, mediaType, 
+                mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres, averageScore, ratings.ToArray());
         }
 
         public double GetAverageScore(int mediaEntryId)

@@ -20,8 +20,8 @@ namespace Semesterprojekt
 
             GenreService genreService = new GenreService(genreRepository);
             UserService userService = new UserService(userRepository, genreService);
-            MediaEntryService mediaEntryService = new MediaEntryService(mediaEntryRepository, genreService);
-            RatingService ratingService = new RatingService(ratingRepository);
+            RatingService ratingService = new RatingService(ratingRepository, userService);
+            MediaEntryService mediaEntryService = new MediaEntryService(mediaEntryRepository, genreService, ratingService);
 
             UserController userController = new UserController(userService, genreService);
             MediaEntryController mediaEntryController = new MediaEntryController(mediaEntryService, genreService,

@@ -9,7 +9,7 @@ namespace Semesterprojekt.DTOs
     public class MediaEntryDTO
     {
         public MediaEntryDTO(string title, string description, string mediaType, int releaseYear, 
-            int ageRestriction, string[] genres, double averageScore)
+            int ageRestriction, string[] genres, double averageScore, RatingViewDTO[] ratings)
         {
             this.title = title;
             this.description = description;
@@ -18,6 +18,7 @@ namespace Semesterprojekt.DTOs
             this.ageRestriction = ageRestriction;
             this.genres = genres;
             this.averageScore = averageScore;
+            this.ratings = ratings;
         }
 
         public string title { get; set; }
@@ -27,5 +28,6 @@ namespace Semesterprojekt.DTOs
         public int ageRestriction { get; set; }
         public string[] genres { get; set; }
         public double averageScore { get; set; }
+        public RatingViewDTO[] ratings { get; set; }
     }
 }
