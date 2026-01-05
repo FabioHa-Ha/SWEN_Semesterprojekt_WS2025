@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Semesterprojekt.DTOs
 {
-    public class MediaEntryDTO
+    public class MediaEntryUpdateDTO
     {
-        public MediaEntryDTO(string title, string description, string mediaType, int releaseYear, 
-            int ageRestriction, string[] genres, double averageScore)
+        public MediaEntryUpdateDTO(string title, string description, string mediaType, int releaseYear, int ageRestriction, string[] genres)
         {
             this.title = title;
             this.description = description;
@@ -17,7 +16,6 @@ namespace Semesterprojekt.DTOs
             this.releaseYear = releaseYear;
             this.ageRestriction = ageRestriction;
             this.genres = genres;
-            this.averageScore = averageScore;
         }
 
         public string title { get; set; }
@@ -26,6 +24,5 @@ namespace Semesterprojekt.DTOs
         public int releaseYear { get; set; }
         public int ageRestriction { get; set; }
         public string[] genres { get; set; }
-        public double averageScore { get; set; }
     }
 }

@@ -31,6 +31,11 @@ namespace Semesterprojekt.Services
             return mediaEntryRepository.GetAllMediaEntries();
         }
 
+        public double GetAverageScore(int mediaEntryId)
+        {
+            return mediaEntryRepository.GetAverageScore(mediaEntryId);
+        }
+
         public void CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
         {
             int newId = mediaEntryRepository.CreateMediaEntry(mediaEntryDTO, userId);
@@ -56,7 +61,7 @@ namespace Semesterprojekt.Services
             mediaEntryRepository.DeleteMediaEntry(mediaEntryId);
         }
 
-        public void UpdateMediaEntry(int userId, int mediaEntryId, MediaEntryDTO mediaEntryDTO)
+        public void UpdateMediaEntry(int userId, int mediaEntryId, MediaEntryUpdateDTO mediaEntryDTO)
         {
             MediaEntry mediaEntry = GetMediaEntry(mediaEntryId);
             if (mediaEntry == null)

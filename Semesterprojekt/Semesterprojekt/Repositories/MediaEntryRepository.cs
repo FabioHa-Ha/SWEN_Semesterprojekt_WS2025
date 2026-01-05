@@ -109,6 +109,33 @@ namespace Semesterprojekt.Repositories
             return mediaEntries;
         }
 
+        public double GetAverageScore(int mediaEntryId)
+        {
+            double result = -1;
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT AVG(r.star_rating) " +
+                                    "FROM media_entries m JOIN ratings r ON m.media_entry_id = r.of_media_entry " +
+                                    "WHERE m.media_entry_id = @media_entry_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        if(reader.Read())
+                        {
+                            result = reader.IsDBNull(0) ? -1 : reader.GetDouble(0);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
+
         public int CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
         {
             int newId;
@@ -175,7 +202,7 @@ namespace Semesterprojekt.Repositories
             }
         }
 
-        public void UpdateMediaEnty(int mediaEntryId, MediaEntryDTO mediaEntryDTO)
+        public void UpdateMediaEnty(int mediaEntryId, MediaEntryUpdateDTO mediaEntryDTO)
         {
             string sql = "UPDATE media_entries " +
                             "SET title = @title, description = @description, media_type = @media_type, " +

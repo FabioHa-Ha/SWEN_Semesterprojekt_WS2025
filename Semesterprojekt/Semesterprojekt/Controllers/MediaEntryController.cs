@@ -54,8 +54,9 @@ namespace Semesterprojekt.Controllers
             }
             string[] genres = genreService.GetGenresOfMediaEntry(mediaEntryId);
             string mediaType = GetMediaType(mediaEntry);
+            double averageScore = mediaEntryService.GetAverageScore(mediaEntryId);
             MediaEntryDTO mediaEntryDTO = new MediaEntryDTO(mediaEntry.Title, mediaEntry.Description,
-                mediaType, mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres);
+                mediaType, mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres, averageScore);
             return JsonSerializer.Serialize(mediaEntryDTO);
         }
 
@@ -69,8 +70,9 @@ namespace Semesterprojekt.Controllers
             {
                 genres = genreService.GetGenresOfMediaEntry(mediaEntry.MediaEntryId);
                 mediaType = GetMediaType(mediaEntry);
+                double averageScore = mediaEntryService.GetAverageScore(mediaEntry.MediaEntryId);
                 MediaEntryDTO mediaEntryDTO = new MediaEntryDTO(mediaEntry.Title, mediaEntry.Description,
-                    mediaType, mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres);
+                    mediaType, mediaEntry.ReleaseYear, mediaEntry.AgeRestriction, genres, averageScore);
                 mediaEntryDTOs.Add(mediaEntryDTO);
             }
             MediaEntiresDTO mediaEntiresDTO = new MediaEntiresDTO(mediaEntryDTOs.ToArray());
@@ -110,7 +112,7 @@ namespace Semesterprojekt.Controllers
                 throw new InvalidCredentialException("Invalid Token!");
             }
             User user = userService.GetUserByUsername(username);
-            MediaEntryDTO mediaEntryDTO = JsonSerializer.Deserialize<MediaEntryDTO>(requestBody);
+            MediaEntryUpdateDTO mediaEntryDTO = JsonSerializer.Deserialize<MediaEntryUpdateDTO>(requestBody);
             if (mediaEntryDTO == null)
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
