@@ -129,5 +129,18 @@ namespace Semesterprojekt.Controllers
             User user = userService.GetUserByUsername(username);
             mediaEntryService.FavoriteMediaEntry(user.UserId, mediaEntryId);
         }
+
+
+        public void UnfavoriteMediaEntry(string token, string mediaEntryIdString)
+        {
+            int mediaEntryId = Int32.Parse(mediaEntryIdString);
+            string username = HttpUtility.ValidateJwtToken(token);
+            if (username == "")
+            {
+                throw new InvalidCredentialException("Invalid Token!");
+            }
+            User user = userService.GetUserByUsername(username);
+            mediaEntryService.UnfavoriteMediaEntry(user.UserId, mediaEntryId);
+        }
     }
 }

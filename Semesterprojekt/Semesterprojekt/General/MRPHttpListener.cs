@@ -156,6 +156,11 @@ namespace Semesterprojekt.General
                                     case "DELETE":
                                         switch (true)
                                         {
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*/favorite").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                mediaEntryController.UnfavoriteMediaEntry(authHeader, urlParts[3]);
+                                                break;
                                             case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");

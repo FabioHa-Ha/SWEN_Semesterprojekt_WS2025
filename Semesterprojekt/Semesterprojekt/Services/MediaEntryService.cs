@@ -94,5 +94,24 @@ namespace Semesterprojekt.Services
             }
             mediaEntryRepository.FavoriteMediaEntry(userId, mediaEntryId);
         }
+
+        public void UnfavoriteMediaEntry(int userId, int mediaEntryId)
+        {
+            MediaEntry mediaEntry = GetMediaEntry(mediaEntryId);
+            if (mediaEntry == null)
+            {
+                throw new UnkownMediaEntryException("Invalid id!");
+            }
+            if (mediaEntry.Creator == userId)
+            {
+                throw new InvalidAccessException("You can only edit your own favorite Media Entries!");
+            }
+            bool isFavorite = mediaEntryRepository.IsFavorite(userId, mediaEntryId);
+            if (!isFavorite)
+            {
+                throw new InvalidAccessException("You have not makred this Media Entries as a favorite!");
+            }
+            mediaEntryRepository.UnfavoriteMediaEntry(userId, mediaEntryId);
+        }
     }
 }

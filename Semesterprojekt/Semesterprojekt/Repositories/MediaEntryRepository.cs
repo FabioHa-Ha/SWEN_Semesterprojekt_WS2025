@@ -267,5 +267,26 @@ namespace Semesterprojekt.Repositories
                 connection.Close();
             }
         }
+
+
+        public void UnfavoriteMediaEntry(int userId, int mediaEntryId)
+        {
+            string sql = "DELETE FROM favorite_media_entries " +
+                            "WHERE user_id = @user_id AND media_entry_id = @media_entry_id";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }
