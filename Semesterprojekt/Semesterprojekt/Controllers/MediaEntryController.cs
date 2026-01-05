@@ -57,10 +57,6 @@ namespace Semesterprojekt.Controllers
         {
             int userId = Int32.Parse(userIdString);
             User user = userService.GetValidUser(token, userId);
-            if (user.UserId != userId)
-            {
-                throw new InvalidAccessException("You can only view your own favorites!");
-            }
             List<MediaEntry> mediaEntries = mediaEntryService.GetFavorites(userId);
             List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
             foreach (MediaEntry mediaEntry in mediaEntries)

@@ -28,6 +28,22 @@ namespace Semesterprojekt.Controllers
             this.mediaEntryService = mediaEntryService;
         }
 
+        public string GetRatings(string token, string userIdString)
+        {
+            int userId = Int32.Parse(userIdString);
+            User user = userService.GetValidUser(token, userId);
+            List<Rating> ratings = ratingService.GetRatings(userId);
+            List<RatingHistoryEntryDTO> ratingHistoryEntryDTOs = new List<RatingHistoryEntryDTO>();
+            foreach (Rating rating in ratings)
+            {
+                string mediaTitle = mediaEntryService.GetMediaEntry(rating.OfMediaEntry).Title;
+                ratingHistoryEntryDTOs.Add(new RatingHistoryEntryDTO(rating.Comment, 
+                    rating.StarRating, (DateTime)rating.CreatedAt, mediaTitle, rating.ConfirmedByAuthor));
+            }
+            RatingHistoryDTO ratingHistoryDTO = new RatingHistoryDTO(ratingHistoryEntryDTOs.ToArray());
+            return JsonSerializer.Serialize(ratingHistoryDTO);
+        }
+
         public void CreateRating(string token, string mediaEntryIdString, string requestBody)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);

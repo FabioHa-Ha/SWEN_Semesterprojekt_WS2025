@@ -27,6 +27,11 @@ namespace Semesterprojekt.BusinessLayer
             return ratingRepository.GetRating(id);
         }
 
+        public List<Rating> GetRatings(int userId)
+        {
+            return ratingRepository.GetRatings(userId);
+        }
+
         public void CreateRating(MediaEntry mediaEntry, int userId, RatingDTO ratingDTO)
         {
             Rating? rating = ratingRepository.GetRating(userId, mediaEntry.MediaEntryId);

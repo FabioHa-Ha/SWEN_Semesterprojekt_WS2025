@@ -90,6 +90,11 @@ namespace Semesterprojekt.General
                                                 urlParts = url.Split("/");
                                                 responseString = mediaEntryController.GetFavorites(authHeader, urlParts[3]);
                                                 break;
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/ratings").IsMatch(url):
+                                                requestHandled = true;
+                                                urlParts = url.Split("/");
+                                                responseString = ratingController.GetRatings(authHeader, urlParts[3]);
+                                                break;
                                             case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");

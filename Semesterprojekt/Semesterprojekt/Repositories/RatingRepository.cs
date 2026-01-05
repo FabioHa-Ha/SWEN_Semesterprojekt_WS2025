@@ -80,6 +80,39 @@ namespace Semesterprojekt.PersistenceLayer
             return rating;
         }
 
+        public List<Rating> GetRatings(int userId)
+        {
+            List<Rating> ratings = new List<Rating>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT rating_id, star_rating, rating_comment, created_at, confirmed_by_author, of_media_entry " +
+                                    "FROM ratings " +
+                                    "WHERE creator = @user_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Rating rating = new Rating(reader.GetInt32(0));
+                            rating.StarRating = reader.IsDBNull(1) ? -1 : reader.GetInt32(1);
+                            rating.Comment = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                            rating.CreatedAt = reader.IsDBNull(3) ? null : reader.GetDateTime(3);
+                            rating.ConfirmedByAuthor = reader.GetBoolean(4);
+                            rating.OfMediaEntry = reader.GetInt32(5);
+                            ratings.Add(rating);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return ratings;
+        }
+
         public int CreateRating(int mediaEntryId, int userId, RatingDTO ratingDTO)
         {
             int newId;
