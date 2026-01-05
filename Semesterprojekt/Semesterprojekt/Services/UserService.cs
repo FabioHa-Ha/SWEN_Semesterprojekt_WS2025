@@ -56,6 +56,16 @@ namespace Semesterprojekt.Services
             return user;
         }
 
+        public User ValidateTokenAndGetUser(string token)
+        {
+            string username = HttpUtility.ValidateJwtToken(token);
+            if (username == "")
+            {
+                throw new InvalidCredentialException("Invalid Token!");
+            }
+            return GetUserByUsername(username);
+        }
+
         public User? GetUserById(int id)
         {
             return userRepository.GetUserById(id);

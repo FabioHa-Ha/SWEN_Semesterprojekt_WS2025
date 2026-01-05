@@ -29,12 +29,7 @@ namespace Semesterprojekt.Controllers
         public string GetMediaEntry(string token, string mediaEntryIdString)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             MediaEntry? mediaEntry = mediaEntryService.GetMediaEntry(mediaEntryId);
             if (mediaEntry == null)
             {
@@ -46,12 +41,7 @@ namespace Semesterprojekt.Controllers
 
         public string GetAllMediaEntries(string token)
         {
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             List<MediaEntry> mediaEntries = mediaEntryService.GetAllMediaEntries();
             string[] genres;
             string mediaType;
@@ -72,36 +62,21 @@ namespace Semesterprojekt.Controllers
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             mediaEntryService.CreateMediaEntry(mediaEntryDTO, user.UserId);
         }
 
         public void DeleteMedia(string token, string mediaEntryIdString)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             mediaEntryService.DeleteMediaEntry(mediaEntryId, user.UserId);
         }
 
         public void UpdateMedia(string token, string mediaEntryIdString, string requestBody)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             MediaEntryUpdateDTO mediaEntryDTO = JsonSerializer.Deserialize<MediaEntryUpdateDTO>(requestBody);
             if (mediaEntryDTO == null)
             {
@@ -113,12 +88,7 @@ namespace Semesterprojekt.Controllers
         public void FavoriteMediaEntry(string token, string mediaEntryIdString)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             mediaEntryService.FavoriteMediaEntry(user.UserId, mediaEntryId);
         }
 
@@ -126,12 +96,7 @@ namespace Semesterprojekt.Controllers
         public void UnfavoriteMediaEntry(string token, string mediaEntryIdString)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             mediaEntryService.UnfavoriteMediaEntry(user.UserId, mediaEntryId);
         }
     }

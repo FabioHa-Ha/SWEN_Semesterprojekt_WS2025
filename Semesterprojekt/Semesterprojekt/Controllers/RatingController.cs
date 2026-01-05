@@ -31,12 +31,7 @@ namespace Semesterprojekt.Controllers
         public void CreateRating(string token, string mediaEntryIdString, string requestBody)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             MediaEntry? mediaEntry = mediaEntryService.GetMediaEntry(mediaEntryId);
             if (mediaEntry == null)
             {
@@ -53,12 +48,7 @@ namespace Semesterprojekt.Controllers
         public void LikeRating(string token, string ratingIdString)
         {
             int ratingId = Int32.Parse(ratingIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             Rating? rating = ratingService.GetRating(ratingId);
             if (rating == null)
             {
@@ -70,12 +60,7 @@ namespace Semesterprojekt.Controllers
         public void UpdateRating(string token, string ratingIdString, string requestBody)
         {
             int ratingId = Int32.Parse(ratingIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             Rating? rating = ratingService.GetRating(ratingId);
             if (rating == null)
             {
@@ -92,12 +77,7 @@ namespace Semesterprojekt.Controllers
         public void ConfirmRating(string token, string ratingIdString)
         {
             int ratingId = Int32.Parse(ratingIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             Rating? rating = ratingService.GetRating(ratingId);
             if (rating == null)
             {
@@ -109,12 +89,7 @@ namespace Semesterprojekt.Controllers
         public void DeleteRating(string token, string ratingIdString)
         {
             int ratingId = Int32.Parse(ratingIdString);
-            string username = HttpUtility.ValidateJwtToken(token);
-            if (username == "")
-            {
-                throw new InvalidCredentialException("Invalid Token!");
-            }
-            User user = userService.GetUserByUsername(username);
+            User user = userService.ValidateTokenAndGetUser(token);
             Rating? rating = ratingService.GetRating(ratingId);
             if (rating == null)
             {
