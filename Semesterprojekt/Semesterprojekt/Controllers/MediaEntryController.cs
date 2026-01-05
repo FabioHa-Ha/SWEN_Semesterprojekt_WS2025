@@ -43,8 +43,6 @@ namespace Semesterprojekt.Controllers
         {
             User user = userService.ValidateTokenAndGetUser(token);
             List<MediaEntry> mediaEntries = mediaEntryService.GetAllMediaEntries();
-            string[] genres;
-            string mediaType;
             List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
             foreach (MediaEntry mediaEntry in mediaEntries)
             {
@@ -53,6 +51,25 @@ namespace Semesterprojekt.Controllers
             }
             MediaEntriesDTO mediaEntiresDTO = new MediaEntriesDTO(mediaEntryDTOs.ToArray());
             return JsonSerializer.Serialize(mediaEntiresDTO);
+        }
+
+        public string GetFavorites(string token, string userIdString)
+        {
+            int userId = Int32.Parse(userIdString);
+            User user = userService.GetValidUser(token, userId);
+            if (user.UserId != userId)
+            {
+                throw new InvalidAccessException("You can only view your own favorites!");
+            }
+            List<MediaEntry> mediaEntries = mediaEntryService.GetFavorites(userId);
+            List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
+            foreach (MediaEntry mediaEntry in mediaEntries)
+            {
+                MediaEntryDTO mediaEntryDTO = mediaEntryService.GetMediaEntryView(user.UserId, mediaEntry);
+                mediaEntryDTOs.Add(mediaEntryDTO);
+            }
+            MediaEntriesDTO mediaEntriesDTO = new MediaEntriesDTO(mediaEntryDTOs.ToArray());
+            return JsonSerializer.Serialize(mediaEntriesDTO);
         }
 
         public void CreateMedia(string token, string requestBody)

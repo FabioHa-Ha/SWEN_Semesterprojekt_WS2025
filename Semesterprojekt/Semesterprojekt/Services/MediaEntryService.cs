@@ -68,6 +68,11 @@ namespace Semesterprojekt.Services
             return mediaEntryRepository.GetAverageScore(mediaEntryId);
         }
 
+        public List<MediaEntry> GetFavorites(int userId)
+        {
+            return mediaEntryRepository.GetFavorites(userId);
+        }
+
         public void CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
         {
             int newId = mediaEntryRepository.CreateMediaEntry(mediaEntryDTO, userId);

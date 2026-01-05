@@ -99,7 +99,7 @@ namespace Semesterprojekt.Repositories
                             mediaEntry.Description = reader.IsDBNull(3) ? "" : reader.GetString(3);
                             mediaEntry.ReleaseYear = reader.IsDBNull(4) ? -1 : reader.GetInt32(4);
                             mediaEntry.AgeRestriction = reader.IsDBNull(5) ? -1 : reader.GetInt32(5);
-                            mediaEntry.Creator = reader.GetInt32(5);
+                            mediaEntry.Creator = reader.GetInt32(6);
                             mediaEntries.Add(mediaEntry);
                         }
                     }
@@ -134,6 +134,53 @@ namespace Semesterprojekt.Repositories
                 connection.Close();
             }
             return result;
+        }
+
+        public List<MediaEntry> GetFavorites(int userId)
+        {
+            List<MediaEntry> mediaEntries = new List<MediaEntry>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT m.media_entry_id, m.media_type, m.title, m.description, " +
+                                        "m.release_year, m.age_restriction " +
+                                    "FROM favorite_media_entries f JOIN media_entries m ON f.media_entry_id = m.media_entry_id " +
+                                    "WHERE f.user_id = @user_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MediaEntry mediaEntry = null;
+                            int id = reader.GetInt32(0);
+                            string mediaType = reader.GetString(1);
+                            switch (mediaType)
+                            {
+                                case "Movie":
+                                    mediaEntry = new Movie(id);
+                                    break;
+                                case "Series":
+                                    mediaEntry = new Series(id);
+                                    break;
+                                case "Game":
+                                    mediaEntry = new Game(id);
+                                    break;
+                            }
+                            mediaEntry.Title = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                            mediaEntry.Description = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                            mediaEntry.ReleaseYear = reader.IsDBNull(4) ? -1 : reader.GetInt32(4);
+                            mediaEntry.AgeRestriction = reader.IsDBNull(5) ? -1 : reader.GetInt32(5);
+                            mediaEntries.Add(mediaEntry);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return mediaEntries;
         }
 
         public int CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
