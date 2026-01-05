@@ -219,5 +219,53 @@ namespace Semesterprojekt.Repositories
                 connection.Close();
             }
         }
+
+        public bool IsFavorite(int userId, int mediaEntryId)
+        {
+            bool found = false;
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT media_entry_id " +
+                                    "FROM favorite_media_entries " +
+                                    "WHERE user_id = @user_id AND media_entry_id = @media_entry_id";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            found = true;
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return found;
+        }
+
+        public void FavoriteMediaEntry(int userId, int mediaEntryId)
+        {
+            string sql = "INSERT INTO favorite_media_entries (user_id, media_entry_id) " +
+                            "VALUES (@user_id, @media_entry_id) ";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    command.Parameters.AddWithValue("media_entry_id", mediaEntryId);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }
