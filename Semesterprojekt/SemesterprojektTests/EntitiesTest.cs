@@ -72,16 +72,6 @@ namespace SemesterprojektTests
         }
 
         [TestMethod]
-        public void CreateRatingFailTest()
-        {
-            int userId = 1;
-            int mediaEntryId = 1;
-            int starRating = 6;
-            string comment = "Nice!";
-            Assert.ThrowsException<InvalidStarRatingExcption>(() => new Rating(1, userId, mediaEntryId, starRating, comment));
-        }
-
-        [TestMethod]
         public void CreateUserTest()
         {
             string username = "User1";

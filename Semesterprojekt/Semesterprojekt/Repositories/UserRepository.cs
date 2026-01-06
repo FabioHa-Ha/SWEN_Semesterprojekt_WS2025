@@ -212,5 +212,24 @@ namespace Semesterprojekt.Repositories
             }
             return leaderboardEntries;
         }
+
+        public void DeleteUser(string username)
+        {
+            string sql = "DELETE FROM users " +
+                            "WHERE username = @username";
+
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("username", username);
+
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
     }
 }

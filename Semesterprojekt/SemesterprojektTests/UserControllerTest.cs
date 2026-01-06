@@ -15,9 +15,10 @@ using System.Threading.Tasks;
 namespace SemesterprojektTests
 {
     [TestClass]
-    public sealed class ControllerTest
+    public sealed class UserControllerTest
     {
         private UserController userController;
+        private UserRepository userRepository;
 
         #region UserController Test
         [TestInitialize]
@@ -25,7 +26,7 @@ namespace SemesterprojektTests
         {
             DatabaseConnector databaseConnector = new DatabaseConnector();
 
-            UserRepository userRepository = new UserRepository(databaseConnector);
+            userRepository = new UserRepository(databaseConnector);
             GenreRepository genreRepository = new GenreRepository(databaseConnector);
 
             GenreService genreService = new GenreService(genreRepository);
@@ -46,6 +47,8 @@ namespace SemesterprojektTests
             JwtDTO jwtDTO = JsonSerializer.Deserialize<JwtDTO>(responseString);
 
             Assert.IsNotNull(jwtDTO.token);
+
+            userRepository.DeleteUser(user.username);
         }
 
         [TestMethod]
@@ -59,6 +62,8 @@ namespace SemesterprojektTests
             string responseString = userController.Register(requestString);
 
             Assert.ThrowsException<UserAlreadyExistsException>(() => userController.Register(requestString));
+
+            userRepository.DeleteUser(user.username);
         }
 
         [TestMethod]
@@ -73,6 +78,8 @@ namespace SemesterprojektTests
 
             string responseString = userController.Login(requestString);
             JwtDTO jwtDTO = JsonSerializer.Deserialize<JwtDTO>(responseString);
+
+            userRepository.DeleteUser(user.username);
         }
 
         [TestMethod]
@@ -88,6 +95,57 @@ namespace SemesterprojektTests
             user.password = "password1";
             requestString = JsonSerializer.Serialize(user);
             Assert.ThrowsException<InvalidCredentialException>(() => userController.Login(requestString));
+
+            userRepository.DeleteUser(user.username);
+        }
+
+        [TestMethod]
+        public void GetProfileTest()
+        {
+            UserInfoDTO user = new UserInfoDTO();
+            user.username = "testUserGetProfile";
+            user.password = "password";
+
+            string requestString = JsonSerializer.Serialize(user);
+            userController.Register(requestString);
+
+            string responseString = userController.Login(requestString);
+            JwtDTO jwtDTO = JsonSerializer.Deserialize<JwtDTO>(responseString);
+
+            int userId = userRepository.GetUserByUsername(user.username).UserId;
+
+            responseString = userController.GetProfile(jwtDTO.token, userId.ToString());
+            ProfileDTO profileDTO = JsonSerializer.Deserialize<ProfileDTO>(responseString);
+
+            userRepository.DeleteUser(user.username);
+        }
+
+        [TestMethod]
+        public void UpdateProfileTest()
+        {
+            UserInfoDTO user = new UserInfoDTO();
+            user.username = "testUserUpdateProfile";
+            user.password = "password";
+
+            string requestString = JsonSerializer.Serialize(user);
+            userController.Register(requestString);
+
+            string responseString = userController.Login(requestString);
+            JwtDTO jwtDTO = JsonSerializer.Deserialize<JwtDTO>(responseString);
+
+            int userId = userRepository.GetUserByUsername(user.username).UserId;
+
+            ProfileDTO profileDTO = new ProfileDTO("test@email.com", "Action");
+            requestString = JsonSerializer.Serialize(profileDTO);
+            userController.UpdateProfile(jwtDTO.token, userId.ToString(), requestString);
+
+            responseString = userController.GetProfile(jwtDTO.token, userId.ToString());
+            ProfileDTO getProfileDTO = JsonSerializer.Deserialize<ProfileDTO>(responseString);
+
+            Assert.AreEqual(profileDTO.email, getProfileDTO.email);
+            Assert.AreEqual(profileDTO.favoriteGenre, getProfileDTO.favoriteGenre);
+
+            userRepository.DeleteUser(user.username);
         }
         #endregion
     }
