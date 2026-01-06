@@ -80,31 +80,31 @@ namespace Semesterprojekt.General
                                     case "GET":
                                         switch (true)
                                         {
-                                            case bool _ when new Regex(@"^/api/users/[0-9]*/profile").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/profile$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 responseString = userController.GetProfile(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/users/[0-9]*/favorites").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/favorites$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 responseString = mediaEntryController.GetFavorites(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/users/[0-9]*/ratings").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/ratings$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 responseString = ratingController.GetRatings(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 responseString = mediaEntryController.GetMediaEntry(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media$").IsMatch(url):
                                                 requestHandled = true;
                                                 responseString = mediaEntryController.GetAllMediaEntries(authHeader);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/leaderboard").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/leaderboard$").IsMatch(url):
                                                 requestHandled = true;
                                                 responseString = userController.GetLeaderboard();
                                                 break;
@@ -117,30 +117,30 @@ namespace Semesterprojekt.General
                                                 requestHandled = true;
                                                 responseString = userController.Login(requestBodyText);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/users/register").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/users/register$").IsMatch(url):
                                                 requestHandled = true;
                                                 responseString = userController.Register(requestBodyText);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media/[0-9]*/rate").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*/rate$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 ratingController.CreateRating(authHeader, urlParts[3], requestBodyText);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media/[0-9]*/favorite").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*/favorite$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 mediaEntryController.FavoriteMediaEntry(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media$").IsMatch(url):
                                                 requestHandled = true;
                                                 mediaEntryController.CreateMedia(authHeader, requestBodyText);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*/like").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*/like$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 ratingController.LikeRating(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*/confirm").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*/confirm$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 ratingController.ConfirmRating(authHeader, urlParts[3]);
@@ -150,17 +150,17 @@ namespace Semesterprojekt.General
                                     case "PUT":
                                         switch (true)
                                         {
-                                            case bool _ when new Regex(@"^/api/users/[0-9]*/profile").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/users/[0-9]*/profile$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 userController.UpdateProfile(authHeader, urlParts[3], requestBodyText);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 mediaEntryController.UpdateMedia(authHeader, urlParts[3], requestBodyText);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 ratingController.UpdateRating(authHeader, urlParts[3], requestBodyText);
@@ -170,17 +170,17 @@ namespace Semesterprojekt.General
                                     case "DELETE":
                                         switch (true)
                                         {
-                                            case bool _ when new Regex(@"^/api/media/[0-9]*/favorite").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*/favorite$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 mediaEntryController.UnfavoriteMediaEntry(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media/[0-9]*").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media/[0-9]*$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 mediaEntryController.DeleteMedia(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/ratings/[0-9]*$").IsMatch(url):
                                                 requestHandled = true;
                                                 urlParts = url.Split("/");
                                                 ratingController.DeleteRating(authHeader, urlParts[3]);
