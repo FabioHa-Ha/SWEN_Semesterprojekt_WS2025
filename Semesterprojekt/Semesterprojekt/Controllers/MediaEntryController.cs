@@ -5,6 +5,7 @@ using Semesterprojekt.General;
 using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Authentication;
 using System.Text;
@@ -162,6 +163,57 @@ namespace Semesterprojekt.Controllers
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
             User user = userService.ValidateTokenAndGetUser(token);
             mediaEntryService.UnfavoriteMediaEntry(user.UserId, mediaEntryId);
+        }
+
+        public string GetRecommendations(string token, string userIdString, string url)
+        {
+            int userId = Int32.Parse(userIdString);
+            User user = userService.GetValidUser(token, userId);
+
+            int recommendationType = 0;
+            string[] urlParts = url.Split('?');
+            if (urlParts.Length != 2)
+            {
+                throw new InvalidRequestQueryException("Invalid Request Query!");
+            }
+            if (url.Contains("?"))
+            {
+                string[] queryParams = urlParts[1].Split('&');
+                foreach (string queryParam in queryParams)
+                {
+                    string[] queryParts = queryParam.Split("=");
+                    if (queryParts.Length != 2)
+                    {
+                        throw new InvalidRequestQueryException("Invalid Request Query!");
+                    }
+                    switch (queryParts[1])
+                    {
+                        case "genre":
+                            recommendationType = 1;
+                            break;
+                        case "content":
+                            recommendationType = 2;
+                            break;
+                        default:
+                            throw new InvalidRequestQueryException("Invalid Request Query!");
+                    }
+                }
+            }
+            if(recommendationType == 0)
+            {
+                throw new InvalidRequestQueryException("Invalid Request Query!");
+            }
+
+            List<MediaEntry> mediaEntries = mediaEntryService.GetRecommendations(userId, recommendationType);
+            List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
+            foreach (MediaEntry mediaEntry in mediaEntries)
+            {
+                MediaEntryDTO mediaEntryDTO = mediaEntryService.GetMediaEntryView(userId, mediaEntry);
+                mediaEntryDTOs.Add(mediaEntryDTO);
+            }
+
+            MediaEntriesDTO mediaEntiresDTO = new MediaEntriesDTO(mediaEntryDTOs.ToArray());
+            return JsonSerializer.Serialize(mediaEntiresDTO);
         }
     }
 }

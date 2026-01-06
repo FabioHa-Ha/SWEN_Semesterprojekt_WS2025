@@ -105,7 +105,7 @@ INSERT INTO ratings (creator, of_media_entry, star_rating, rating_comment, confi
 INSERT INTO ratings (creator, of_media_entry, star_rating, rating_comment, confirmed_by_author)
 	VALUES (1, 6, 5, 'Best game ever', true);
 INSERT INTO ratings (creator, of_media_entry, star_rating, rating_comment, confirmed_by_author)
-	VALUES (2, 6, 5, 'Great memories!', true);
+	VALUES (2, 6, 4, 'Great memories!', true);
 
 INSERT INTO rating_likes (rating_id, user_id) VALUES (1, 1);
 INSERT INTO rating_likes (rating_id, user_id) VALUES (3, 2);

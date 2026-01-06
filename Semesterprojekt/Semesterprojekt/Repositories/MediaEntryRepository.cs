@@ -196,6 +196,185 @@ namespace Semesterprojekt.Repositories
             return mediaEntries;
         }
 
+        public List<TypeCountDTO> GetPositiveGenreRatingCounts(int userId)
+        {
+            List<TypeCountDTO> typeCountDTOs = new List<TypeCountDTO>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT g.name, COUNT(*) " +
+                                    "FROM media_entries m " +
+                                        "JOIN ratings r ON m.media_entry_id = r.of_media_entry " +
+                                        "JOIN media_entries_genres mg ON m.media_entry_id = mg.media_entry_id " +
+                                        "JOIN genres g ON g.genre_id = mg.genre_id " +
+                                    "WHERE r.creator = @user_id " +
+                                        "AND r.star_rating >= 3 " +
+                                    "GROUP BY g.name " +
+                                    "ORDER BY COUNT(*)";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string name = reader.IsDBNull(0) ? "" : reader.GetString(0);
+                            int count = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+                            typeCountDTOs.Add(new TypeCountDTO(name, count));
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return typeCountDTOs;
+        }
+
+        public List<TypeCountDTO> GetPositiveMediaTypeRatingCounts(int userId)
+        {
+            List<TypeCountDTO> typeCountDTOs = new List<TypeCountDTO>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT mt.media_type_name, COALESCE(sub.count, 0)" +
+                                    "FROM media_types mt " +
+                                        "LEFT JOIN (SELECT m.media_type AS media_type, COUNT(*) AS count " +
+                                            "FROM media_entries m " +
+                                                "JOIN ratings r ON m.media_entry_id = r.of_media_entry " +
+                                            "WHERE r.creator = @user_id " +
+                                                "AND r.star_rating >= 3 " +
+                                            "GROUP BY m.media_type) sub ON mt.media_type_name = sub.media_type " +
+                                    "ORDER BY sub.count";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string name = reader.IsDBNull(0) ? "" : reader.GetString(0);
+                            int count = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+                            typeCountDTOs.Add(new TypeCountDTO(name, count));
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return typeCountDTOs;
+        }
+
+        public List<MediaEntry> GetNewMediaBasedOnGenre(int userId, string genre)
+        {
+            List<MediaEntry> mediaEntries = new List<MediaEntry>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT m.media_entry_id, m.media_type, m.title, m.description, " +
+                                        "m.release_year, m.age_restriction, m.creator " +
+                                    "FROM media_entries m " +
+                                        "JOIN media_entries_genres mg ON m.media_entry_id = mg.media_entry_id " +
+                                        "JOIN genres g ON g.genre_id = mg.genre_id " +
+                                    "WHERE g.name = @genre " +
+                                        "AND NOT EXISTS (SELECT 1 " +
+                                                "FROM ratings r " +
+                                                "WHERE r.creator = @user_id " +
+                                                    "AND r.of_media_entry = m.media_entry_id) ";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("genre", genre);
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MediaEntry mediaEntry = null;
+                            int id = reader.GetInt32(0);
+                            string mediaType = reader.GetString(1);
+                            switch (mediaType)
+                            {
+                                case "Movie":
+                                    mediaEntry = new Movie(id);
+                                    break;
+                                case "Series":
+                                    mediaEntry = new Series(id);
+                                    break;
+                                case "Game":
+                                    mediaEntry = new Game(id);
+                                    break;
+                            }
+                            mediaEntry.Title = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                            mediaEntry.Description = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                            mediaEntry.ReleaseYear = reader.IsDBNull(4) ? -1 : reader.GetInt32(4);
+                            mediaEntry.AgeRestriction = reader.IsDBNull(5) ? -1 : reader.GetInt32(5);
+                            mediaEntry.Creator = reader.GetInt32(6);
+                            mediaEntries.Add(mediaEntry);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return mediaEntries;
+        }
+
+
+        public List<MediaEntry> GetNewMediaBasedOnMediaType(int userId, string mediaType)
+        {
+            List<MediaEntry> mediaEntries = new List<MediaEntry>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT m.media_entry_id, m.media_type, m.title, m.description, " +
+                                        "m.release_year, m.age_restriction, m.creator " +
+                                    "FROM media_entries m " +
+                                    "WHERE m.media_type = @media_type " +
+                                        "AND NOT EXISTS (SELECT 1 " +
+                                                "FROM ratings r " +
+                                                "WHERE r.creator = @user_id " +
+                                                    "AND r.of_media_entry = m.media_entry_id)";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("media_type", mediaType);
+                    command.Parameters.AddWithValue("user_id", userId);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MediaEntry mediaEntry = null;
+                            int id = reader.GetInt32(0);
+                            string resultMediaType = reader.GetString(1);
+                            switch (resultMediaType)
+                            {
+                                case "Movie":
+                                    mediaEntry = new Movie(id);
+                                    break;
+                                case "Series":
+                                    mediaEntry = new Series(id);
+                                    break;
+                                case "Game":
+                                    mediaEntry = new Game(id);
+                                    break;
+                            }
+                            mediaEntry.Title = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                            mediaEntry.Description = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                            mediaEntry.ReleaseYear = reader.IsDBNull(4) ? -1 : reader.GetInt32(4);
+                            mediaEntry.AgeRestriction = reader.IsDBNull(5) ? -1 : reader.GetInt32(5);
+                            mediaEntry.Creator = reader.GetInt32(6);
+                            mediaEntries.Add(mediaEntry);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return mediaEntries;
+        }
+
         public int CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
         {
             int newId;

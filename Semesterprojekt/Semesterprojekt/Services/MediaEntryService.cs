@@ -197,5 +197,47 @@ namespace Semesterprojekt.Services
             }
             mediaEntryRepository.UnfavoriteMediaEntry(userId, mediaEntryId);
         }
+
+        public List<MediaEntry> GetRecommendations(int userId, int recommendationType) // 1: genre; 2: content
+        {
+            List<MediaEntry> recommendations = new List<MediaEntry>();
+            if (recommendationType == 1)
+            {
+                List<TypeCountDTO> typeCountDTOs = mediaEntryRepository.GetPositiveGenreRatingCounts(userId);
+                int i = 0;
+                int foundMedia = 0;
+                while (i < typeCountDTOs.Count && foundMedia < 3)
+                {
+                    List<MediaEntry> possibleMedia = mediaEntryRepository.GetNewMediaBasedOnGenre(userId, typeCountDTOs[i].type);
+                    int j = 0;
+                    while(j < possibleMedia.Count && foundMedia < 3)
+                    {
+                        recommendations.Add(possibleMedia[j]);
+                        foundMedia++;
+                        j++;
+                    }
+                    i++;
+                }
+            }
+            else
+            {
+                List<TypeCountDTO> typeCountDTOs = mediaEntryRepository.GetPositiveMediaTypeRatingCounts(userId);
+                int i = 0;
+                int foundMedia = 0;
+                while (i < typeCountDTOs.Count && foundMedia < 3)
+                {
+                    List<MediaEntry> possibleMedia = mediaEntryRepository.GetNewMediaBasedOnMediaType(userId, typeCountDTOs[i].type);
+                    int j = 0;
+                    while (j < possibleMedia.Count && foundMedia < 3)
+                    {
+                        recommendations.Add(possibleMedia[j]);
+                        foundMedia++;
+                        j++;
+                    }
+                    i++;
+                }
+            }
+            return recommendations;
+        }
     }
 }
