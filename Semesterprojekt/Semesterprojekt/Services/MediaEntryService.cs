@@ -114,7 +114,7 @@ namespace Semesterprojekt.Services
             return mediaEntryRepository.GetFavorites(userId);
         }
 
-        public void CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
+        public int CreateMediaEntry(MediaEntryUpdateDTO mediaEntryDTO, int userId)
         {
             int newId = mediaEntryRepository.CreateMediaEntry(mediaEntryDTO, userId);
             MediaEntry mediaEntry = GetMediaEntry(newId);
@@ -123,6 +123,7 @@ namespace Semesterprojekt.Services
                 Genre genre = genreService.GetOrCreateGenre(genreName);
                 mediaEntryRepository.AssignGenreToMediaEntry(genre.GenreId, newId);
             }
+            return newId;
         }
 
         public void DeleteMediaEntry(int mediaEntryId, int userId)

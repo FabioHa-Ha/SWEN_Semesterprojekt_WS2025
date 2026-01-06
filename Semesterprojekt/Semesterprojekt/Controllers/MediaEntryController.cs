@@ -120,15 +120,15 @@ namespace Semesterprojekt.Controllers
             return JsonSerializer.Serialize(mediaEntriesDTO);
         }
 
-        public void CreateMedia(string token, string requestBody)
+        public int CreateMedia(string token, string requestBody)
         {
-            MediaEntryDTO mediaEntryDTO = JsonSerializer.Deserialize<MediaEntryDTO>(requestBody);
+            MediaEntryUpdateDTO mediaEntryDTO = JsonSerializer.Deserialize<MediaEntryUpdateDTO>(requestBody);
             if (mediaEntryDTO == null)
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
             User user = userService.ValidateTokenAndGetUser(token);
-            mediaEntryService.CreateMediaEntry(mediaEntryDTO, user.UserId);
+            return mediaEntryService.CreateMediaEntry(mediaEntryDTO, user.UserId);
         }
 
         public void DeleteMedia(string token, string mediaEntryIdString)

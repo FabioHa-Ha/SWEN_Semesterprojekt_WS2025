@@ -375,7 +375,7 @@ namespace Semesterprojekt.Repositories
             return mediaEntries;
         }
 
-        public int CreateMediaEntry(MediaEntryDTO mediaEntryDTO, int userId)
+        public int CreateMediaEntry(MediaEntryUpdateDTO mediaEntryDTO, int userId)
         {
             int newId;
             string sql = "INSERT INTO media_entries (media_type, title, description, release_year, age_restriction, creator) " +
