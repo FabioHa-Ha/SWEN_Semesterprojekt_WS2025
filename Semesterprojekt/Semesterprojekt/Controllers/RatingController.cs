@@ -42,7 +42,7 @@ namespace Semesterprojekt.Controllers
             return JsonSerializer.Serialize(ratingHistoryDTO);
         }
 
-        public void CreateRating(string token, string mediaEntryIdString, string requestBody)
+        public int CreateRating(string token, string mediaEntryIdString, string requestBody)
         {
             int mediaEntryId = Int32.Parse(mediaEntryIdString);
             User user = userService.ValidateTokenAndGetUser(token);
@@ -56,7 +56,7 @@ namespace Semesterprojekt.Controllers
             {
                 throw new InvalidRequestBodyException("Invalid Request!");
             }
-            ratingService.CreateRating(mediaEntry, user.UserId, ratingDTO);
+            return ratingService.CreateRating(mediaEntry, user.UserId, ratingDTO);
         }
 
         public void LikeRating(string token, string ratingIdString)

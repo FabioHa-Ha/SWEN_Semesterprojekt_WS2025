@@ -32,7 +32,7 @@ namespace Semesterprojekt.Services
             return ratingRepository.GetRatings(userId);
         }
 
-        public void CreateRating(MediaEntry mediaEntry, int userId, RatingDTO ratingDTO)
+        public int CreateRating(MediaEntry mediaEntry, int userId, RatingDTO ratingDTO)
         {
             Rating? rating = ratingRepository.GetRating(userId, mediaEntry.MediaEntryId);
             if (rating != null)
@@ -47,7 +47,7 @@ namespace Semesterprojekt.Services
             {
                 throw new InvalidStarRatingExcption("Invalid star rating!");
             }
-            ratingRepository.CreateRating(mediaEntry.MediaEntryId, userId, ratingDTO);
+            return ratingRepository.CreateRating(mediaEntry.MediaEntryId, userId, ratingDTO);
         }
 
         public void LikeRating(int userId, Rating rating)
