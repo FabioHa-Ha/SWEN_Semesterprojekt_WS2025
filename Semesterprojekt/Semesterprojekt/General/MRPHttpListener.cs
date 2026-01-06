@@ -104,6 +104,10 @@ namespace Semesterprojekt.General
                                                 requestHandled = true;
                                                 responseString = mediaEntryController.GetAllMediaEntries(authHeader);
                                                 break;
+                                            case bool _ when new Regex(@"^/api/leaderboard").IsMatch(url):
+                                                requestHandled = true;
+                                                responseString = userController.GetLeaderboard();
+                                                break;
                                         }
                                         break;
                                     case "POST":

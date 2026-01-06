@@ -70,5 +70,11 @@ namespace Semesterprojekt.Controllers
             ProfileDTO profileDTO = JsonSerializer.Deserialize<ProfileDTO>(requestBody);
             userService.UpdateProfile(user, profileDTO);
         }
+
+        public string GetLeaderboard()
+        {
+            LeaderboardDTO leaderbaordDTO = userService.GetLeaderboard();
+            return JsonSerializer.Serialize(leaderbaordDTO);
+        }
     }
 }

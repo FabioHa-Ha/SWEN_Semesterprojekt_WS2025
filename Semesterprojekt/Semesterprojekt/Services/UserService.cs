@@ -81,5 +81,11 @@ namespace Semesterprojekt.Services
             Genre genre = genreService.GetOrCreateGenre(profileDTO.favoriteGenre);
             userRepository.UpdateProfile(user.UserId, profileDTO.email, genre.GenreId);
         }
+
+        public LeaderboardDTO GetLeaderboard()
+        {
+            List<LeaderboardEntryDTO> leaderboardEntryDTOs = userRepository.GetLeaderboard();
+            return new LeaderboardDTO(leaderboardEntryDTOs.ToArray());
+        }
     }
 }

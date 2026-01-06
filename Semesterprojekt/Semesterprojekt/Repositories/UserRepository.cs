@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.General;
 using System;
@@ -180,6 +181,36 @@ namespace Semesterprojekt.Repositories
                 }
                 connection.Close();
             }
+        }
+
+        public List<LeaderboardEntryDTO> GetLeaderboard()
+        {
+            List<LeaderboardEntryDTO> leaderboardEntries = new List<LeaderboardEntryDTO>();
+            NpgsqlConnection connection = databaseConnector.getConnection();
+            using (connection)
+            {
+                connection.Open();
+                string query = "SELECT u.username, COUNT(r.creator) " +
+                                    "FROM ratings r join users u ON r.creator = u.user_id " +
+                                    "WHERE r.confirmed_by_author = true " +
+                                    "GROUP BY u.username " +
+                                    "ORDER BY COUNT(r.creator) DESC";
+
+                using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
+                {
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {                   
+                            string username = reader.GetString(0);
+                            int ratingCount = reader.GetInt32(1);
+                            leaderboardEntries.Add(new LeaderboardEntryDTO(username, ratingCount));
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return leaderboardEntries;
         }
     }
 }
