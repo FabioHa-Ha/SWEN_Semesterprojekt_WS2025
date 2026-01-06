@@ -1,9 +1,7 @@
-﻿using Semesterprojekt.BusinessLayer;
-using Semesterprojekt.DTOs;
+﻿using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
 using Semesterprojekt.General;
-using Semesterprojekt.PersistenceLayer;
 using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;

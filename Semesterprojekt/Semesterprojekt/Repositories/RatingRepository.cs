@@ -2,9 +2,8 @@
 using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.General;
-using Semesterprojekt.Repositories;
 
-namespace Semesterprojekt.PersistenceLayer
+namespace Semesterprojekt.Repositories
 {
     public class RatingRepository
     {

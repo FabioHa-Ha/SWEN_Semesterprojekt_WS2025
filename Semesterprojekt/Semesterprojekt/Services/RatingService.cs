@@ -1,7 +1,7 @@
 ﻿using Semesterprojekt.DTOs;
 using Semesterprojekt.Entities;
 using Semesterprojekt.Exceptions;
-using Semesterprojekt.PersistenceLayer;
+using Semesterprojekt.Repositories;
 using Semesterprojekt.Services;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Semesterprojekt.BusinessLayer
+namespace Semesterprojekt.Services
 {
     public class RatingService
     {

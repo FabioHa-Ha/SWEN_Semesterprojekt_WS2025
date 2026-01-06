@@ -1,7 +1,5 @@
-﻿using Semesterprojekt.BusinessLayer;
-using Semesterprojekt.Controllers;
+﻿using Semesterprojekt.Controllers;
 using Semesterprojekt.General;
-using Semesterprojekt.PersistenceLayer;
 using Semesterprojekt.Repositories;
 using Semesterprojekt.Services;
 
