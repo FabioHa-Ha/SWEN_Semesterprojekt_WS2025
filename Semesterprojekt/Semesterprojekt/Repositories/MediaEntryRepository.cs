@@ -63,27 +63,40 @@ namespace Semesterprojekt.Repositories
             return mediaEntry;
         }
 
-        public List<MediaEntry> GetAllMediaEntries()
+        public List<MediaEntry> SearchMediaEntries(string title, string genre, string mediaType, string releaseYear,
+            string ageRestriction)
         {
             List<MediaEntry> mediaEntries = new List<MediaEntry>();
             NpgsqlConnection connection = databaseConnector.getConnection();
             using (connection)
             {
                 connection.Open();
-                string query = "SELECT media_entry_id, media_type, title, description, " +
-                                        "release_year, age_restriction, creator " +
-                                    "FROM media_entries";
+                string query = "SELECT DISTINCT m.media_entry_id, m.media_type, m.title, m.description, " +
+                                        "m.release_year, m.age_restriction, m.creator " +
+                                    "FROM media_entries m " +
+                                        "JOIN media_entries_genres mg ON m.media_entry_id = mg.media_entry_id " +
+                                        "JOIN genres g ON g.genre_id = mg.genre_id " +
+                                    "WHERE (@title IS NULL OR m.title LIKE '%' || @title || '%') " +
+                                        "AND (CAST(@genre AS VARCHAR) IS NULL OR g.name = @genre) " +
+                                        "AND (CAST(@media_type AS VARCHAR) IS NULL OR m.media_type = @media_type) " +
+                                        "AND (CAST(@release_year AS INT) IS NULL OR m.release_year = @release_year) " +
+                                        "AND (CAST(@age_restriction AS INT) IS NULL OR m.age_restriction = @age_restriction)";
 
                 using (NpgsqlCommand command = new NpgsqlCommand(query, connection))
                 {
+                    command.Parameters.AddWithValue("title", title);
+                    command.Parameters.AddWithValue("genre", genre.Equals("") ? DBNull.Value : genre);
+                    command.Parameters.AddWithValue("media_type", mediaType.Equals("") ? DBNull.Value : mediaType);
+                    command.Parameters.AddWithValue("release_year", releaseYear.Equals("") ? DBNull.Value : Int32.Parse(releaseYear));
+                    command.Parameters.AddWithValue("age_restriction", ageRestriction.Equals("") ? DBNull.Value : Int32.Parse(ageRestriction));
                     using (NpgsqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             MediaEntry mediaEntry = null;
                             int id = reader.GetInt32(0);
-                            string mediaType = reader.GetString(1);
-                            switch (mediaType)
+                            string foudnMediaType = reader.GetString(1);
+                            switch (foudnMediaType)
                             {
                                 case "Movie":
                                     mediaEntry = new Movie(id);

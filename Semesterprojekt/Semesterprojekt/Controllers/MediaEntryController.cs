@@ -39,16 +39,67 @@ namespace Semesterprojekt.Controllers
             return JsonSerializer.Serialize(mediaEntryDTO);
         }
 
-        public string GetAllMediaEntries(string token)
+        public string SearchMediaEntries(string token, string url)
         {
             User user = userService.ValidateTokenAndGetUser(token);
-            List<MediaEntry> mediaEntries = mediaEntryService.GetAllMediaEntries();
-            List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
-            foreach (MediaEntry mediaEntry in mediaEntries)
+
+            string title = "";
+            string genre = "";
+            string mediaType = "";
+            string releaseYear = "";
+            string ageRestriction = "";
+            string rating = "";
+            string sortBy = "";
+
+            string[] urlParts = url.Split('?');
+            if (urlParts.Length > 2) 
             {
-                MediaEntryDTO mediaEntryDTO = mediaEntryService.GetMediaEntryView(user.UserId, mediaEntry);
-                mediaEntryDTOs.Add(mediaEntryDTO);
+                throw new InvalidRequestQueryException("Invalid Request Query!");
             }
+            if (url.Contains("?"))
+            {
+                string[] queryParams = urlParts[1].Split('&');
+                foreach (string queryParam in queryParams)
+                {
+                    string[] queryParts = queryParam.Split("=");
+                    if (queryParts.Length != 2)
+                    {
+                        throw new InvalidRequestQueryException("Invalid Request Query!");
+                    }
+                    switch (queryParts[0])
+                    {
+                        case "title":
+                            title = queryParts[1];
+                            break;
+                        case "genre":
+                            genre = queryParts[1];
+                            break;
+                        case "mediaType":
+                            mediaType = queryParts[1];
+                            break;
+                        case "releaseYear":
+                            releaseYear = queryParts[1];
+                            break;
+                        case "ageRestriction":
+                            ageRestriction = queryParts[1];
+                            break;
+                        case "rating":
+                            rating = queryParts[1];
+                            break;
+                        case "sortBy":
+                            sortBy = queryParts[1];
+                            break;
+                        default:
+                            throw new InvalidRequestQueryException("Invalid Request Query!");
+                    }
+                }
+            }
+
+            List<MediaEntry> mediaEntries = mediaEntryService.SearchMediaEntries(title, genre, mediaType, releaseYear,
+                ageRestriction);
+
+            List<MediaEntryDTO> mediaEntryDTOs = mediaEntryService.FilterAndConvertMediaEntries(mediaEntries, user.UserId, rating, sortBy);
+
             MediaEntriesDTO mediaEntiresDTO = new MediaEntriesDTO(mediaEntryDTOs.ToArray());
             return JsonSerializer.Serialize(mediaEntiresDTO);
         }

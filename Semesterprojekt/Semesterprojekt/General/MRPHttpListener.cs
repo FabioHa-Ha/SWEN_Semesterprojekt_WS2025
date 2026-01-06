@@ -100,9 +100,9 @@ namespace Semesterprojekt.General
                                                 urlParts = url.Split("/");
                                                 responseString = mediaEntryController.GetMediaEntry(authHeader, urlParts[3]);
                                                 break;
-                                            case bool _ when new Regex(@"^/api/media$").IsMatch(url):
+                                            case bool _ when new Regex(@"^/api/media.*$").IsMatch(url):
                                                 requestHandled = true;
-                                                responseString = mediaEntryController.GetAllMediaEntries(authHeader);
+                                                responseString = mediaEntryController.SearchMediaEntries(authHeader, url);
                                                 break;
                                             case bool _ when new Regex(@"^/api/leaderboard$").IsMatch(url):
                                                 requestHandled = true;
@@ -192,7 +192,7 @@ namespace Semesterprojekt.General
                             catch (Exception e) when (e is InvalidRequestBodyException || 
                                 e is UserAlreadyExistsException || e is UnkownMediaEntryException || 
                                 e is InvalidStarRatingExcption || e is InvalidAccessException ||
-                                e is UnkownRatingException)
+                                e is UnkownRatingException || e is InvalidRequestQueryException)
                             {
                                 response.StatusCode = 400;
                                 responseString = ErrorResponse(request, response, e);

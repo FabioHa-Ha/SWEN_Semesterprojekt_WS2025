@@ -5,6 +5,7 @@ using Semesterprojekt.Exceptions;
 using Semesterprojekt.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,9 +31,50 @@ namespace Semesterprojekt.Services
             return mediaEntryRepository.GetMediaEntry(id);
         }
 
-        public List<MediaEntry> GetAllMediaEntries()
+        public List<MediaEntry> SearchMediaEntries(string title, string genre, string mediaType, string releaseYear,
+            string ageRestriction)
         {
-            return mediaEntryRepository.GetAllMediaEntries();
+            return mediaEntryRepository.SearchMediaEntries(title, genre, mediaType, releaseYear,
+                ageRestriction);
+        }
+
+        public List<MediaEntryDTO> FilterAndConvertMediaEntries(List<MediaEntry> mediaEntries, int userId, string rating, string sortBy)
+        {
+            List<MediaEntryDTO> mediaEntryDTOs = new List<MediaEntryDTO>();
+            double ratingValue = 0;
+            if (rating == "")
+            {
+                ratingValue = -1;
+            }
+            else
+            {
+                ratingValue = Double.Parse(rating);
+            }
+            foreach (MediaEntry mediaEntry in mediaEntries)
+            {
+                MediaEntryDTO mediaEntryDTO = GetMediaEntryView(userId, mediaEntry);
+                if (mediaEntryDTO.averageScore >= ratingValue)
+                {
+                    mediaEntryDTOs.Add(mediaEntryDTO);
+                }
+            }
+            switch (sortBy)
+            {
+                case "title":
+                    mediaEntryDTOs = mediaEntryDTOs.OrderBy(o => o.title).ToList();
+                    break;
+                case "year":
+                    mediaEntryDTOs = mediaEntryDTOs.OrderBy(o => o.releaseYear).ToList();
+                    break;
+                case "rating":
+                    mediaEntryDTOs = mediaEntryDTOs.OrderBy(o => o.averageScore).ToList();
+                    break;
+                default:
+                    mediaEntryDTOs = mediaEntryDTOs.OrderBy(o => o.mediaType).ToList();
+                    break;
+            }
+
+            return mediaEntryDTOs;
         }
 
         private string GetMediaType(MediaEntry mediaEntry)
